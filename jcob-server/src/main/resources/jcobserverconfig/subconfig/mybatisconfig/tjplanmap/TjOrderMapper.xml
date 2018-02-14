@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjOrderMapper" >
+  <resultMap id="BaseResultMap" type="TjOrder" >
+    <id column="id" property="id"  />
+    <result column="plan_id" property="planId" />
+    <result column="amount" property="amount" />
+    <result column="member_id" property="memberId" />
+    <result column="pay_status" property="payStatus" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+     <result column="client_type" property="clientType"  />
+    <result column="channel" property="channel"  />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, plan_id, amount, member_id, pay_status, create_time, update_time,client_type,channel
+  </sql>
+  <select id="selectTjOrderById" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_order  where id = #{id}
+  </select>
+  <select id="queryOrderByPlanId" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_order  where plan_id = #{planId}
+  </select>
+  
+  <insert id="saveTjOrder" parameterType="TjOrder" useGeneratedKeys="true" keyProperty="id" >
+    insert into tj_order
+	   (
+	   	plan_id,
+	    amount,
+	    member_id, 
+	    pay_status, 
+	    create_time, 
+	    update_time,
+	    client_type,
+	    channel)
+	 values
+	   (
+	    #{planId},
+	    #{amount},
+	    #{memberId},
+	    #{payStatus},
+	    #{createTime},
+	    #{updateTime},
+	    #{clientType},
+	    #{channel})
+  </insert>
+  
+  
+  <update id="updateOrderPayStatus" parameterType="map" >
+    update tj_order
+    set 
+      pay_status = #{newPayStatus},
+      update_time =#{updateTime}
+    where id = #{id} and pay_status = #{oldPayStatus}
+  </update>
+</mapper>

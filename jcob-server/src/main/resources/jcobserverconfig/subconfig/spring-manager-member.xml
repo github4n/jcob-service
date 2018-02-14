@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<tx:annotation-driven />
+	
+	<!-- member信息相关操作管理 -->
+	<bean name="memberManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberManagerImpl" />
+	<bean name="memberLoginManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberLoginManagerImpl" />
+	<bean name="memberLoginTokenManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberLoginTokenManagerImpl" />
+	<bean name="memberFeedbackManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberFeedbackManagerImpl" />
+	<bean name="memberInfoLogManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberInfoLogManagerImpl" />
+	<bean name="memberOperLogManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberOperLogManagerImpl" />
+	<bean name="memberSmsManagerImpl" class="com.aicai.jcob.member.manager.impl.MemberSmsManagerImpl" />
+	
+	<!-- member充值管理 -->
+	<bean name="memberChargeLogManagerImpl" class="com.aicai.jcob.membercharge.manager.impl.MemberChargeLogManagerImpl" />
+	<bean name="memberChargeReturnLogManagerImpl" class="com.aicai.jcob.membercharge.manager.impl.MemberChargeReturnLogManagerImpl" />
+	<bean name="memberChargeChannelManagerImpl" class="com.aicai.jcob.membercharge.manager.impl.MemberChargeChannelManagerImpl" />
+	<bean name="memberChargeWayManagerImpl" class="com.aicai.jcob.membercharge.manager.impl.MemberChargeWayManagerImpl" />
+	<bean name="memberUseChargeWayManagerImpl" class="com.aicai.jcob.membercharge.manager.impl.MemberUseChargeWayManagerImpl" />
+	
+	<!-- member钱包管理 -->
+	<bean name="memberWalletManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberWalletManagerImpl" />
+	<bean name="memberWalletLogManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberWalletLogManagerImpl" />
+	<bean name="memberHuoyanWalletManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberHuoyanWalletManagerImpl" />
+	<bean name="memberHuoyanWalletLogManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberHuoyanWalletLogManagerImpl" />
+	<bean name="memberBizDirverWalletManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberBizDirverWalletManagerImpl" />
+	<bean name="memberBizExceptionBillManagerImpl" class="com.aicai.jcob.memberwallet.manager.impl.MemberBizExceptionBillManagerImpl" />
+	
+	<!-- member提款管理 -->
+	<bean name="memberDrawMoneyLogManagerImpl" class="com.aicai.jcob.memberdrawmoney.manager.impl.MemberDrawMoneyLogManagerImpl" />
+	<bean name="memberDrawMoneyWayManagerImpl" class="com.aicai.jcob.memberdrawmoney.manager.impl.MemberDrawMoneyWayManagerImpl" />
+	<bean name="memberDrawMoneyTranscationManagerImpl" class="com.aicai.jcob.memberdrawmoney.manager.impl.MemberDrawMoneyTranscationManagerImpl" />
+	<bean name="drawMoneyBankManagerImpl" class="com.aicai.jcob.memberdrawmoney.manager.impl.DrawMoneyBankManagerImpl" />
+	
+	<bean name="clientAppManagerImpl" class="com.aicai.jcob.client.manager.impl.ClientAppManagerImpl" />
+	
+</beans>

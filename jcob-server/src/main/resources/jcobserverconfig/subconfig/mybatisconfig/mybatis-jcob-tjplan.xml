@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="localCacheScope" value="STATEMENT" />
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	<typeAliases>
+	<typeAlias alias="Member" type="com.aicai.jcob.member.common.domain.Member" />
+	<typeAlias alias="TjPlan" type="com.aicai.jcob.tjplan.common.domain.TjPlan" />
+	<typeAlias alias="TjLookLog" type="com.aicai.jcob.tjplan.common.domain.TjLookLog" />
+	<typeAlias alias="TjOrder" type="com.aicai.jcob.tjplan.common.domain.TjOrder" />
+	<typeAlias alias="TjPlanItem" type="com.aicai.jcob.tjplan.common.domain.TjPlanItem" />
+	<typeAlias alias="TjRace" type="com.aicai.jcob.tjrace.common.domain.TjRace" />
+	<typeAlias alias="TjRaceTask" type="com.aicai.jcob.tjrace.common.domain.TjRaceTask" />
+	<typeAlias alias="TjExpertInfo"
+		type="com.aicai.jcob.tjexpert.common.domain.TjExpertInfo" />
+	<typeAlias alias="TjAttentionExpert"
+		type="com.aicai.jcob.tjexpert.common.domain.TjAttentionExpert" />
+	<typeAlias alias="TjExpertLevelLog"
+		type="com.aicai.jcob.tjexpert.common.domain.TjExpertLevelLog" />
+	<typeAlias alias="TjExpertApplyInfo"
+		type="com.aicai.jcob.tjexpert.common.domain.TjExpertApplyInfo" />
+	<typeAlias alias="TjExpertSetInfo"
+		type="com.aicai.jcob.tjexpert.common.domain.TjExpertSetInfo" />
+		
+	<typeAlias alias="TjExpertAdminWinRatioResult"
+		type="com.aicai.jcob.tjexpert.common.domain.result.TjExpertAdminWinRatioResult" />
+
+	<typeAlias alias="ClientModule" type="com.aicai.jcob.adver.common.domain.ClientModule"/>
+	<typeAlias alias="ClientModuleAd" type="com.aicai.jcob.adver.common.domain.ClientModuleAd"/>
+	<typeAlias alias="ClientTemplate" type="com.aicai.jcob.adver.common.domain.ClientTemplate"/>
+	<typeAlias alias="ClientVersionAgentId" type="com.aicai.jcob.adver.common.domain.ClientVersionAgentId"/>
+	<typeAlias alias="ClientVersionAndAgentId" type="com.aicai.jcob.adver.common.result.ClientVersionAndAgentId"/>
+	<typeAlias alias="ClientFunctionRecord" type="com.aicai.jcob.adver.common.domain.ClientFunctionRecord"/>
+	<typeAlias alias="ClientUpgrade" type="com.aicai.jcob.client.common.domain.ClientUpgrade"/>
+	<typeAlias alias="ClientSecretKey" type="com.aicai.jcob.client.common.domain.ClientSecretKey"/>
+	<typeAlias alias="ClientChannel" type="com.aicai.jcob.client.common.domain.ClientChannel"/>
+	<typeAlias alias="AuditSwitch" type="com.aicai.jcob.audit.common.domain.AuditSwitch"/>
+	</typeAliases>
+
+	<typeHandlers>
+		<typeHandler handler="com.aicai.dao.mybatis.typehandler.CalendarTypeHandler"
+			javaType="java.util.Calendar" />
+		<typeHandler handler="com.aicai.dao.mybatis.typehandler.CalendarTypeHandler"
+			javaType="java.util.GregorianCalendar" />
+	</typeHandlers>
+
+	<mappers>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjPlanMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjLookLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjOrderMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjPlanItemMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjExpertInfoMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjAttentionExpertMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjExpertApplyInfoMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjExpertSetInfoMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjplanmap/TjExpertLevelLogMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjracemap/TjRaceMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/tjracemap/TjRaceTaskMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/adver/ClientModuleAdMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/adver/ClientModuleMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/adver/ClientTemplateMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/adver/ClientVersionAgentIdMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/adver/ClientFunctionRecordMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/client/ClientUpgradeMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/client/ClientSecretKeyMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/client/ClientChannelMapper.xml"/>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/auditswitch/AuditSwitchMapper.xml"/>
+	</mappers>
+</configuration>

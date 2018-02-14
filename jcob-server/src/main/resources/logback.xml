@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+			[%-5level] [%date{yyyy-MM-dd HH:mm:ss}] %logger{96} [%line] - %msg%n
+			</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%-16(%d{MM-dd HH:mm:ss.SSS}) %-5thread %-5level %logger{1} - %msg%n</pattern>
+		</layout>
+	</appender>
+
+	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.home}/logs/jcob-server.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${catalina.home}/logs/jcob-server-%d{yyyy-MM-dd}.%i.log
+			</FileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern> %date %level [%thread] %msg%n </pattern>
+		</encoder>
+	</appender>
+
+	 <!-- PROFILER用于打内部执行时间的 -->
+	  <appender name="PROFILER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	       <file>${catalina.home}/logs/profiler/profiler.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<FileNamePattern>${catalina.home}/logs/profiler/profiler.%d{yyyy-MM-dd}</FileNamePattern>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%-16(%d{MM-dd HH:mm:ss.SSS}) %-5thread %-5level %logger{1} - %msg%n</pattern>
+			</encoder>
+	 </appender>
+	 
+	 <appender name="InvokeRecorder" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	       <file>${catalina.home}/logs/invokeCounter.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<FileNamePattern>${catalina.home}/logs/invokeCounter.%d{yyyy-MM-dd}</FileNamePattern>
+			</rollingPolicy>
+			<encoder>
+				<pattern>%-16(%d{MM-dd HH:mm:ss.SSS}) %-5thread %-5level %logger{1} - %msg%n</pattern>
+			</encoder>
+	 </appender>
+	 <appender name="PROFILER-callMarkLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	     <Append>true</Append>
+	     <File>${catalina.home}/logs/profiler/profiler-callMark.log</File>
+	     <MaxFileSize>500KB</MaxFileSize>
+	     <MaxBackupIndex>50</MaxBackupIndex>
+	     <encoder>
+	       <pattern>%m%n</pattern>
+	       </encoder>
+	 </appender>
+	
+	<!-- aicai-profiler使用 -->
+	<logger name="com.aicai.profiler.core.LogManagerImpl" level="INFO" additivity="false">
+   		<appender-ref ref="PROFILER"/>
+ 	</logger>
+ 	
+ 	<logger name="profiler.counter.log" level="INFO" additivity="false">
+   		<appender-ref ref="InvokeRecorder"/>
+ 	</logger>
+ 	
+ 	<!-- aicai-profiler-callMark使用 -->
+ 	<logger name="profiler.callMark.log" level="INFO" additivity="false">
+  		<appender-ref ref="PROFILER-callMarkLog"/>
+ 	</logger>
+	<logger name="org.springframework" level="info" />
+	<logger name="com.alibaba.dubbo" level="warn" />
+   
+<!-- 	<logger name="org.mybatis" level="debug" />
+	<logger name="org.apache.ibatis" level="debug" />
+	<logger name="java.sql" level="debug" /> -->
+	<root level="info">
+		<appender-ref ref="file" />
+	</root>
+
+</configuration>  

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        
+	<description>jcobserver spring content</description>
+	
+	<context:component-scan base-package="com.aicai.jcob,com.aicaipiao.datachange" />
+	
+	<bean name="globalParam" class="com.aicai.jcob.common.GlobalParam">
+		<property name="sysMemberId" value="${jcobService.sysMemberId}"></property>
+		<property name="cashTOHuoyanRatio" value="1"></property>
+	</bean>
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-service-member.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-service-tjplan.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-manager-member.xml" />
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-manager-tjplan.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-handler.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-dao-mybatis.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-mybatistemplate-tjplan.xml" />
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-mybatistemplate-member.xml" />
+	
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-db-tjplan.xml" />
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-db-member.xml" />
+	
+	
+	
+    <import resource="classpath:/jcobserverconfig/subconfig/spring-dubbo-config.xml"/>
+    <import resource="classpath:/jcobserverconfig/subconfig/spring-dubbo-provider-tjplan.xml"/>
+    <import resource="classpath:/jcobserverconfig/subconfig/spring-dubbo-provider-member.xml"/>
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-env.xml" />
+	
+	<!-- 导入默认的DataChange的发送者的配置 -->
+	<import resource="classpath:/dataChangeConfig/spring-dataChange-sender-jcob.xml" />
+	
+	<!-- 短信服务 -->
+	<import resource="classpath*:/msgCenterServiceClientConfig/client-context-msgcenter.xml" />
+	
+	<!-- profiler -->
+	<import resource="classpath:/jcobserverconfig/subconfig/spring-profiler.xml" />
+	
+	
+	 
+	
+</beans>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberDrawMoneyWayMapper" >
+  <resultMap id="BaseResultMap" type="MemberDrawMoneyWay" >
+    <id column="id" property="id" />
+    <result column="member_id" property="memberId"  />
+    <result column="bank_code" property="bankCode" />
+    <result column="bank_name" property="bankName"  />
+    <result column="draw_bank_info" property="drawBankInfo"  />
+    <result column="status" property="status" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime" />
+
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, member_id, bank_code, bank_name, draw_bank_info, status, create_time, update_time
+  </sql>
+  
+  <select id="queryByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_draw_money_way
+    where id = #{id}
+  </select>
+  <select id="queryMemberDrawMoneyWayListByMemberId" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_draw_money_way
+    where member_id = #{memberId} and status = 1 order by update_time desc
+  </select>
+  <select id="queryDrawMoneyWayByBankNameAndMemberId" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_draw_money_way
+    where member_id = #{memberId} and bank_name = #{bankName} and status = 1
+  </select>
+
+  <insert id="saveDrawMoneyWay" parameterType="MemberDrawMoneyWay" useGeneratedKeys="true" keyProperty="id">
+    insert into member_draw_money_way
+	  (
+	   member_id,
+	   bank_code,
+	   bank_name,
+	   draw_bank_info,
+	   status,
+	   create_time,
+	   update_time)
+	values
+	  (
+	   #{memberId},
+	   #{bankCode},
+	   #{bankName},
+	   #{drawBankInfo},
+	   #{status},
+	   #{createTime},
+	   #{updateTime})
+  </insert>
+ 
+  <update id="updateDrawMoneyWayStatus" parameterType="map" >
+    update member_draw_money_way
+    set 
+      status = #{newStatus},
+      update_time = #{updateTime}
+    where id = #{id} and status = #{oldStatus}
+  </update>
+  <update id="updateDrawMoneyWayRecentlyUse" parameterType="map" >
+    update member_draw_money_way
+    set 
+      update_time = #{updateTime}
+    where id = #{id} 
+  </update>
+  
+  
+  <resultMap id="memberDrawMoneyWayResultMap" type="com.aicai.jcob.memberdrawmoney.common.domain.result.MemberDrawMoneyWayResult">
+    <id column="id" property="id" />
+    <result column="nick_name" property="nickName"/>
+    <result column="real_name" property="realName"/>
+    <result column="level" property="level"/>
+    <result column="member_id" property="memberId"  />
+    <result column="bank_name" property="bankName"  />
+    <result column="draw_bank_info" property="drawBankInfo"  />
+    <result column="status" property="status" />
+    <result column="create_time" property="createTime"  />
+  </resultMap>
+
+	<select id="queryMemberDrawMoneyWayByPageCount" parameterType="map"
+		resultType="int">
+		select count(1) from member_draw_money_way mw left join member m on
+		mw.member_id=m.id
+		<include refid="memberDrawMoneyWayCondition" />
+	</select>
+
+	<select id="queryMemberDrawMoneyWayByPage" parameterType="map"
+		resultMap="memberDrawMoneyWayResultMap">
+		select m.nick_name nick_name,
+		m.real_name real_name,
+		mw.id id,
+		mw.member_id member_id,
+		mw.bank_name bank_name,
+		mw.draw_bank_info draw_bank_info,
+		mw.status status,
+		mw.create_time create_time
+		from member_draw_money_way mw left join member m on
+		mw.member_id=m.id
+		<include refid="memberDrawMoneyWayCondition" />
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<sql id="memberDrawMoneyWayCondition">
+		<if test="condition != null and condition.level != null ">
+			left join tj_expert_info e on mw.member_id=e.member_id
+		</if>
+		<where>
+			<if test="condition != null">
+				<if test="condition.memberId != null">
+					and mw.member_id = #{condition.memberId}
+				</if>
+				<if test="condition.nickName != null and condition.nickName!=''">
+					and m.nick_name like
+					CONCAT('%',#{condition.nickName},'%')
+				</if>
+				<if test="condition.level != null and condition.level != -1">
+					and e.level = #{condition.level}
+				</if>
+				<if test="condition.phone != null and condition.phone!=''">
+					and m.phone like CONCAT('%',#{condition.phone},'%')
+				</if>
+				<if test="condition.realName != null and condition.realName!=''">
+					and m.real_name like CONCAT('%',#{condition.realName},'%')
+				</if>
+				<if test="condition.startDate != null">
+					and mw.create_time>=#{condition.startDate}
+				</if>
+				<if test="condition.endDate != null">
+				<![CDATA[and mw.create_time<=#{condition.endDate}]]>
+				</if>
+				<if test="condition.bankCode != null and condition.bankCode !=''">
+					and mw.bank_code = #{condition.bankCode}
+				</if>
+				<if test="condition.bankName != null and condition.bankName !=''">
+					and mw.bank_name like CONCAT('%',#{condition.bankName},'%')
+				</if>
+			</if>
+		</where>
+	</sql>
+</mapper>

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberChargeLogMapper" >
+  <resultMap id="BaseResultMap" type="MemberChargeLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="third_charge_no" property="thirdChargeNo" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="OTHER" />
+    <result column="client_type" property="clientType" jdbcType="TINYINT" />
+    <result column="channel" property="channel" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="charge_way_index" property="chargeWayIndex" jdbcType="TINYINT" />
+    <result column="charge_channel_index" property="chargeChannelIndex" jdbcType="TINYINT" />
+    <result column="request_time" property="requestTime" jdbcType="TIMESTAMP" />
+    <result column="response_time" property="responseTime" jdbcType="TIMESTAMP" />
+    <result column="handing_cost" property="handingCost" jdbcType="OTHER" />
+    <result column="notify_url" property="notifyUrl" jdbcType="VARCHAR" />
+    <result column="return_url" property="returnUrl" jdbcType="VARCHAR" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_card" property="bankCard" jdbcType="VARCHAR" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, member_id, third_charge_no, amount, client_type, channel, status, charge_way_index, 
+    charge_channel_index, request_time, response_time, handing_cost, notify_url, return_url, 
+    bank_code,bank_card,pay_type
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="MemberChargeLog" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member_charge_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_charge_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <insert id="insertSelective" parameterType="MemberChargeLog" >
+  	<selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+  
+    insert into member_charge_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="thirdChargeNo != null" >
+        third_charge_no,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="chargeWayIndex != null" >
+        charge_way_index,
+      </if>
+      <if test="chargeChannelIndex != null" >
+        charge_channel_index,
+      </if>
+      <if test="requestTime != null" >
+        request_time,
+      </if>
+      <if test="responseTime != null" >
+        response_time,
+      </if>
+      <if test="handingCost != null" >
+        handing_cost,
+      </if>
+      <if test="notifyUrl != null" >
+        notify_url,
+      </if>
+      <if test="returnUrl != null" >
+        return_url,
+      </if>
+      <if test="bankCode != null" >
+        bank_code,
+      </if>
+      <if test="bankCard != null">
+      	bank_card,
+      </if>
+      <if test="payType != null">
+      	pay_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="thirdChargeNo != null" >
+        #{thirdChargeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=OTHER},
+      </if>
+      <if test="clientType != null" >
+        #{clientType,jdbcType=TINYINT},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="chargeWayIndex != null" >
+        #{chargeWayIndex,jdbcType=TINYINT},
+      </if>
+      <if test="chargeChannelIndex != null" >
+        #{chargeChannelIndex,jdbcType=TINYINT},
+      </if>
+      <if test="requestTime != null" >
+        #{requestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="responseTime != null" >
+        #{responseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handingCost != null" >
+        #{handingCost,jdbcType=OTHER},
+      </if>
+      <if test="notifyUrl != null" >
+        #{notifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="returnUrl != null" >
+        #{returnUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCode != null" >
+        #{bankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null">
+      	#{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null">
+      	#{payType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="countByExample" parameterType="MemberChargeLog" resultType="java.lang.Integer" >
+    select count(*) from member_charge_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  
+  <select id="queryMemberCardChargeDayTotalAmount" parameterType="map" resultType="java.math.BigDecimal">
+  	SELECT SUM(amount) FROM member_charge_log
+	
+	WHERE member_id = #{memberId,jdbcType=BIGINT}
+	
+	AND status = #{status,jdbcType=BIT}
+	
+	AND bank_card = #{bankCard,jdbcType=VARCHAR}
+	
+	AND charge_channel_index in
+	
+	<foreach collection="channelArray" item="channel" index="index" open="(" separator="," close=")">
+		#{channel}
+	</foreach>
+	
+	AND request_time BETWEEN #{beginTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+	
+  </select>
+  
+  <update id="updateMemberChargeLogStatusById" parameterType = "map" >
+  	update member_charge_log
+  	set status = #{status,jdbcType=BIT}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberChargeLogStatusThirdChargeNoById" parameterType = "map" >
+  	update member_charge_log
+  	set status = #{status,jdbcType=BIT},
+  	third_charge_no = #{thirdChargeNo,jdbcType=VARCHAR}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberChargeLogStatusThirdChargeNoRespTimeById" parameterType = "map" >
+  	update member_charge_log
+  	set status = #{status,jdbcType=BIT},
+  	third_charge_no = #{thirdChargeNo,jdbcType=VARCHAR},
+  	response_time = #{responseTime,jdbcType=TIMESTAMP}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberChargeLotStatusHandCostRespTimeById" parameterType = "map" >
+  	update member_charge_log
+  	set status = #{status,jdbcType=BIT},
+  	response_time = #{responseTime,jdbcType=TIMESTAMP},
+  	handing_cost = #{handingCost,jdbcType=OTHER}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberChargeLogBankCodePayType" parameterType = "map" >
+  	update member_charge_log
+  	set bank_code = #{bankCode,jdbcType=VARCHAR}
+  	
+  	<if test="payType != null">
+  		,pay_type = #{payType,jdbcType=TINYINT}
+  	</if>
+  	
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <resultMap id="memberChargeResultMap" type="com.aicai.jcob.membercharge.common.result.MemberChargeResult">
+    <id column="id" property="id" />
+    <result column="nick_name" property="nickName"/>
+    <result column="member_id" property="memberId"/>
+    <result column="third_charge_no" property="thirdChargeNo"/>
+    <result column="amount" property="amount"/>
+    <result column="client_type" property="clientType"/>
+    <result column="channel" property="channel"/>
+    <result column="status" property="status" />
+    <result column="charge_way_index" property="chargeWayIndex"/>
+    <result column="charge_channel_index" property="chargeChannelIndex"/>
+    <result column="request_time" property="requestTime"/>
+    <result column="response_time" property="responseTime"/>
+    <result column="handing_cost" property="handingCost"/>
+    
+    <result column="total_success" property="totalSuccess"/>
+    <result column="total_failed" property="totalFailed"/>
+  </resultMap>
+	
+  <select id="queryMemberChargeByPageCount" parameterType="map" resultType="int">
+		select count(1) from member_charge_log mc left join member m on
+		mc.member_id=m.id
+		<include refid="queryMemberChargeCondition" />
+	</select>
+
+	<select id="queryMemberChargeByPage" parameterType="map" resultMap="memberChargeResultMap">
+		select m.nick_name nick_name,
+			   mc.id id,
+			   mc.member_id member_id, 
+			   mc.third_charge_no third_charge_no, 
+			   mc.amount amount, 
+			   mc.client_type client_type, 
+			   mc.channel channel, 
+			   mc.status status, 
+			   mc.charge_way_index charge_way_index, 
+    		   mc.charge_channel_index charge_channel_index, 
+    		   mc.request_time request_time, 
+    		   mc.response_time response_time, 
+    		   mc.handing_cost handing_cost
+		from member_charge_log mc left join member m on mc.member_id=m.id
+		<include refid="queryMemberChargeCondition" />
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<select id="queryMemberChargeAmountSum" parameterType="map" resultMap="memberChargeResultMap">
+		select IFNULL(SUM(IF(mc.status=1,mc.amount,0)),0) total_success,
+			   IFNULL(SUM(IF(mc.status=0,mc.amount,0)),0) total_failed
+		from member_charge_log mc left join member m on mc.member_id=m.id
+		<include refid="queryMemberChargeCondition" />
+	</select>
+	
+	<sql id="queryMemberChargeCondition">
+	    <if test="condition != null and condition.level != null ">
+			left join tj_expert_info e on mc.member_id=e.member_id
+		</if>
+		<where>
+			<if test="condition != null">
+				<if test="condition.memberId != null">
+					and mc.member_id = #{condition.memberId}
+				</if>
+				<if test="condition.clientType != null and condition.clientType != -1">
+					and mc.client_type = #{condition.clientType}
+				</if>
+				<if test="condition.nickName != null and condition.nickName!=''">
+					and m.nick_name like CONCAT('%',#{condition.nickName},'%')
+				</if>
+				<if test="condition.level != null and condition.level != -1">
+					and e.level = #{condition.level}
+				</if>
+				<if test="condition.phone != null and condition.phone!=''">
+					and m.phone like CONCAT('%',#{condition.phone},'%')
+				</if>
+				<if test="condition.requestStartDate != null">
+					and mc.request_time>=#{condition.requestStartDate}
+				</if>
+				<if test="condition.requestEndDate != null">
+				<![CDATA[and mc.request_time<=#{condition.requestEndDate}]]>
+				</if>
+				<if test="condition.responseStartDate != null">
+					and mc.request_time>=#{condition.responseStartDate}
+				</if>
+				<if test="condition.responseEndDate != null">
+				<![CDATA[and mc.request_time<=#{condition.responseEndDate}]]>
+				</if>
+				<if test="condition.chargeId != null">
+					and mc.id = #{condition.chargeId}
+				</if>
+				<if test="condition.thirdChargeNo != null and condition.thirdChargeNo!=''">
+					and mc.third_charge_no = #{condition.thirdChargeNo}
+				</if>
+				<if test="condition.status != null and condition.status != -1">
+					and mc.status = #{condition.status}
+				</if>
+				<if test="condition.minAmount != null">
+					and mc.amount>=#{condition.minAmount}
+				</if>
+				<if test="condition.maxAmount != null">
+				<![CDATA[and mc.amount<=#{condition.maxAmount}]]>
+				</if>
+				<if test="condition.chargeWay != null and condition.chargeWay != -1">
+					and mc.charge_way_index = #{condition.chargeWay}
+				</if>
+				<if test="condition.chargeChannel != null and condition.chargeChannel != -1">
+					and mc.charge_channel_index = #{condition.chargeChannel}
+				</if>
+			</if>
+		</where>
+	</sql>
+</mapper>

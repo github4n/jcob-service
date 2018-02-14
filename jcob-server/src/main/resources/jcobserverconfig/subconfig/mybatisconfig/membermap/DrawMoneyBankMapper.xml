@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="DrawMoneyBankMapper">
+	<resultMap id="DrawMoneyBankMap" type="DrawMoneyBank">
+		<id property="id" column="id" />
+		<result property="receiveBank" column="RECEIVE_BANK" />
+		<result property="receiveBankInter" column="RECEIVE_BANK_INTER" />
+		<result property="receiveBankShort" column="RECEIVE_BANK_SHORT" />
+		<result property="bankAccountType" column="BANK_ACCOUNT_TYPE" />
+		<result property="provinceCityFlag" column="PROVINCE_CITY_FLAG" />
+		<result property="branchFlag" column="BRANCH_FLAG" />
+		<result property="creditCardFlag" column="CREDIT_CARD_FLAG" />
+		<result property="bankBookFlag" column="BANK_BOOK_FLAG" />
+		<result property="holidayServiceFlag" column="HOLIDAY_SERVICE_FLAG" />
+		<result property="serviceTimeFrom" column="SERVICE_TIME_FROM" />
+		<result property="serviceTimeTo" column="SERVICE_TIME_TO" />
+		<result property="holidayToWork" column="HOLIDAY_TO_WORK" />
+		<result property="workToHoliday" column="WORK_TO_HOLIDAY" />
+		<result property="hour" column="HOUR" />
+		<result property="bankFlag" column="bank_Flag" />
+		<result property="bankCode" column="bank_Code" />
+	</resultMap>
+	<resultMap id="DrawMoneyBranchBankMap" type="com.aicai.jcob.memberdrawmoney.common.domain.DrawMoneyBranchBank">
+		<id property="id" column="id" />
+		<result property="areaId" column="area_id" />
+		<result property="name" column="name" />
+		<result property="parentId" column="parent_id" />
+	</resultMap>
+	<resultMap id="DrawMoneyBranchBankVoMap" type="com.aicai.jcob.memberdrawmoney.common.domain.DrawMoneyBranchBankVo">
+		<id property="id" column="id" />
+		<result property="areaId" column="area_id" />
+		<result property="areaName" column="area_name" />
+		<result property="name" column="name" />
+		<result property="parentId" column="parent_id" />
+		<result property="parentName" column="parent_name" />
+	</resultMap>
+	<resultMap id="DrawMoneyProvinceCityMap" type="com.aicai.jcob.memberdrawmoney.common.domain.DrawMoneyProvinceCity">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="parentId" column="parent_id" />
+		<result property="code" column="code" />
+	</resultMap>
+
+	<sql id="Bank_All_Column_List">
+		id,receive_bank,receive_bank_inter,receive_bank_short,bank_account_type,
+		province_city_flag,branch_flag,credit_card_flag,
+		bank_book_flag,holiday_service_flag,service_time_from,
+		service_time_to,holiday_to_work,work_to_holiday,hour,bank_Flag,bank_Code
+	</sql>
+	
+	<update id="updateBranchBank" parameterType="DrawMoneyBranchBank">
+		update draw_money_Branch_bank 
+		set 
+		area_id=#{areaId},name=#{name},parent_id=#{parentId}
+		where 
+		id =#{id}
+	</update>
+	
+	<select id="selectPrimaryKey" resultType="int">
+		select LAST_INSERT_ID()
+	</select>
+	
+	<insert id="insertBranchBank" parameterType="DrawMoneyBranchBank">
+	 insert into draw_money_Branch_bank (
+	 	area_id,name,parent_id
+	 )
+	 value(
+	 	#{areaId},#{name},#{parentId}
+	 )
+	</insert>
+
+
+	<sql id="Branch_Bank_All_Column_List">
+		id,area_id,name,parent_id
+	</sql>
+
+
+	<sql id="Province_City_All_Column_List">
+		id,parent_id,name,code
+	</sql>
+
+
+
+	<select id="queryBankList" parameterType="map" resultMap="DrawMoneyBankMap">
+		select
+		<include refid="Bank_All_Column_List" />
+		from draw_money_bank where branch_flag = 0
+	</select>
+	<select id="queryBankListByBankFlag" parameterType="map" resultMap="DrawMoneyBankMap">
+		select
+		<include refid="Bank_All_Column_List" />
+		from draw_money_bank
+		where bank_Flag in 
+				<foreach collection="bankFlagList" item="item" open="(" separator=" , " close=")">
+					 #{item}
+				</foreach>
+	</select>
+	
+	<select id="queryProvinceCityList" parameterType="map" resultMap="DrawMoneyProvinceCityMap">
+		select
+		<include refid="Province_City_All_Column_List" />
+		from draw_money_province_city
+	</select>
+
+	<select id="queryBranchBankCount" parameterType="map"
+		resultType="int">
+		select count(*) from draw_money_Branch_bank bb
+		<include refid="pageBranchBankWhere" />
+	</select>
+	<select id="queryProvinceCityCount" parameterType="map"
+		resultType="int">
+		select count(*) from draw_money_province_city pc
+		<include refid="pageProviceCityWhere" />
+	</select>
+	<select id="queryBranchBankById" parameterType="map" resultMap="DrawMoneyBranchBankMap">
+		select id,area_id,name,parent_id from draw_money_Branch_bank
+		where id =#{id}
+	</select>
+	
+	<select id="queryBranchBankPage" parameterType="map"
+		resultMap="DrawMoneyBranchBankMap">
+		select *
+		from (
+		select
+		<include refid="Branch_Bank_All_Column_List" />
+		from draw_money_Branch_bank bb
+		<include refid="pageBranchBankWhere" />
+		order by bb.name desc
+		) t   limit #{startIndex}, #{pageSize}
+	</select>
+	
+	<sql id="pageBranchBankWhere">
+		<where>
+			<if test="cityId!=null and cityId!=-1">
+			and area_id=#{cityId} 
+			</if>
+			<if test="bankId!=null and bankId!=-1">
+			and parent_id=#{bankId}
+			</if>
+			<if test="name!=null">
+			and name=#{name}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="queryBranchBankCountVo" parameterType="map"
+		resultType="int">
+		select count(*) from draw_money_Branch_bank bb
+		<include refid="pageBranchBankVoWhere" />
+	</select>
+	
+	<select id="queryBranchBankPageVo" parameterType="map"
+		resultMap="DrawMoneyBranchBankVoMap">
+		select *
+		from (
+		select
+		bb.id,bb.area_id as area_id,bb.name as name,bb.parent_id as parent_id,b.receive_bank as parent_name,pc.name as area_name
+		from draw_money_Branch_bank bb 
+		left join draw_money_bank b on b.id=bb.parent_id
+		left join draw_money_province_city pc on pc.id=bb.area_id
+		<include refid="pageBranchBankVoWhere" />
+		order by bb.name desc
+		) t   limit #{startIndex}, #{pageSize}
+	</select>
+	
+	<sql id="pageBranchBankVoWhere">
+		<where>
+			<if test="cityId!=null and cityId!=-1">
+			and bb.area_id=#{cityId} 
+			</if>
+			<if test="bankId!=null and bankId!=-1">
+			and bb.parent_id=#{bankId}
+			</if>
+			<if test="name!=null">
+			and bb.name like concat('%',
+				concat(#{name}, '%'))
+			</if>
+		</where>
+	</sql>
+	
+	<select id="queryProvinceCityPage" parameterType="map"
+		resultMap="DrawMoneyProvinceCityMap">
+		select *
+		from (
+		select
+		<include refid="Province_City_All_Column_List" />
+		from draw_money_province_city pc
+		<include refid="pageProviceCityWhere" />
+		order by pc.name desc
+		) t  limit #{startIndex}, #{pageSize}
+	</select>
+	
+	
+	<sql id="pageProviceCityWhere">
+		<where>
+			<choose>
+				<when test="includeCity==null and provinceId!=null">
+					parent_id=#{provinceId}
+				</when>
+				<when test="includeCity==0">
+					parent_id=0
+				</when>
+			</choose>
+		</where>
+	</sql>
+
+</mapper>

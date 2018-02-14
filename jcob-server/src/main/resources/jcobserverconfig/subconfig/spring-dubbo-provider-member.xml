@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       ">
+    <!--发布服务-->
+    <description>dubbo service provider-memer</description>
+
+    <!--member-->
+    <dubbo:service interface="com.aicai.jcob.member.common.service.MemberWriteService"
+                   id="memberWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberWriteServiceImpl"
+                   version="1.0.0"
+                   owner="zhl"/>
+       <dubbo:service interface="com.aicai.jcob.member.common.service.MemberSmsService"
+                   id="memberSmsServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberSmsServiceImpl"
+                   version="1.0.0"
+                   owner="zhl"/>
+   <dubbo:service interface="com.aicai.jcob.memberwallet.common.service.MemberWalletWriteService" 
+  				   ref="memberWalletWriteServiceImpl" 
+				   id="memberWalletWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   version="1.0.0"
+                   owner="duannp"/>
+   <dubbo:service interface="com.aicai.jcob.memberwallet.common.service.MemberWalletLogWriteService" 
+                   ref="memberWalletLogWriteServiceImpl" 
+   				   id="memberWalletLogWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   version="1.0.0"
+                   owner="duannp"/>
+   <dubbo:service interface="com.aicai.jcob.memberwallet.common.service.MemberHuoyanWalletWriteService"
+   				   ref="memberHuoyanWalletWriteServiceImpl"
+   				   id="memberHuoyanWalletWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   version="1.0.0"
+                   owner="duannp"/>
+   <dubbo:service interface="com.aicai.jcob.memberwallet.common.service.MemberHuoyanWalletLogWriteService" 
+   				   ref="memberHuoyanWalletLogWriteServiceImpl"
+   				   id="memberHuoyanWalletLogWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   version="1.0.0"
+                   owner="duannp"/>
+   <dubbo:service interface="com.aicai.jcob.member.common.service.MemberFeedbackWriteService" 
+   				   ref="memberFeedbackWriteServiceImpl"
+   				   id="memberFeedbackWriteServiceServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   version="1.0.0"
+                   owner="duannp"/>
+                   
+   <dubbo:service interface="com.aicai.jcob.membercharge.common.service.MemberChargeWayWriteService"
+                   id="memberChargeWayWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberChargeWayWriteServiceImpl"
+                   version="1.0.0"
+                   owner="zhl"/>
+   
+   <dubbo:service interface="com.aicai.jcob.membercharge.common.service.MemberChargeLogWriteService"
+                   id="memberChargeLogWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberChargeLogWriteServiceImpl"
+                   version="1.0.0"
+                   owner="zhl"/>
+   <dubbo:service interface="com.aicai.jcob.memberwallet.common.service.MemberBizExceptionBillWriteService"
+                   id="memberBizExceptionBillWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberBizExceptionBillWriteServiceImpl"
+                   version="1.0.0"
+                   owner="duannp"/>
+   <dubbo:service interface="com.aicai.jcob.client.common.service.ClientAppWriteService"
+                   id="clientAppWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientAppWriteServiceImpl"
+                   version="1.0.0"
+                   owner="duannp"/>
+   
+   
+   
+   
+   
+</beans>

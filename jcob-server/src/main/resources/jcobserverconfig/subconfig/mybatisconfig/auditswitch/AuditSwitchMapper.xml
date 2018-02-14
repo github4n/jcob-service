@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.AuditSwitchMapper">
+    <resultMap id="BaseResultMap" type="AuditSwitch">
+        <result column="id" property="id"/>
+        <result column="switch_type" property="type"/>
+        <result column="client_type" property="clientType" />
+        <result column="status" property="status"/>
+        <result column="operator" property="operator" />
+        <result column="update_time"  property="updateTime"/>
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, switch_type, client_type, status, operator, update_time, create_time
+    </sql>
+
+    <sql id="tableName">audit_switch ass </sql>
+
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="AuditSwitch" keyProperty="id">
+        insert into
+        audit_switch
+        (switch_type, client_type, status, operator, update_time, create_time)
+        values
+        (#{type}, #{clientType}, #{status},#{operator},#{updateTime},#{createTime})
+    </insert>
+
+    <sql id="selectCondition">
+        <where>
+            <if test="type!=null">
+                switch_type = #{type}
+            </if>
+            <if test="clientType!=null">
+                and client_type = #{clientType}
+            </if>
+            <if test="startTime!=null">
+                and update_time >=#{startTime}
+            </if>
+            <if test="endTime!=null">
+                and <![CDATA[  update_time < #{endTime} ]]>
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+            <if test="id!=null">
+                and id = #{id}
+            </if>
+            <if test="ids !=null">
+                and id in
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="selectById" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <include refid="selectCondition"/>
+    </select>
+
+    <select id="selectByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <include refid="selectCondition"/>
+        limit #{startIndex}, #{pageSize}
+    </select>
+
+    <select id="selectList" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <include refid="selectCondition"/>
+    </select>
+
+    <select id="countByPage" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(*)
+        from
+        <include refid="tableName"/>
+        <include refid="selectCondition"/>
+    </select>
+
+
+    <update id="updateStatus" parameterType="java.util.HashMap">
+        update audit_switch
+        set
+        status =#{status}, operator = #{operator}, update_time =#{updateTime}
+        where id = #{id}
+    </update>
+
+    <update id="update" parameterType="java.util.HashMap">
+        update audit_switch
+        <set>
+            <if test="type!=null">
+                switch_type = #{type},
+            </if>
+            <if test="clientType!=null">
+                client_type = #{clientType},
+            </if>
+            <if test="operator!=null">
+                operator = #{operator},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            <if test="updateTime!=null">
+                update_time = #{updateTime}
+            </if>
+        </set>
+        where id =#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="map" >
+        delete from audit_switch where id = #{id}
+    </delete>
+
+
+</mapper>

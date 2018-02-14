@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjExpertSetInfoMapper" >
+  <resultMap id="tjPersonSetExpertResultMap" type="TjExpertSetInfo" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="level" property="level"  />
+    <result column="operater_name" property="operaterName"  />
+    <result column="description" property="description"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+  </resultMap>
+  <resultMap id="tjExpertSetAdminResultMap" type="com.aicai.jcob.tjexpert.common.domain.result.TjExpertSetAdminResult" >
+    <result column="member_id" property="memberId"  />
+    <result column="level" property="level"  />
+    <result column="operater_name" property="operaterName"  />
+    <result column="description" property="description"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+  </resultMap>
+ 
+ <sql id="Base_Column_List" >
+    id, member_id, level, operater_name,
+    description, create_time, update_time
+  </sql>
+
+ <sql id="query_PageExpert_condition" >
+  <where>
+ 1=1
+		<if test="memberIdArray!=null">
+		AND member_id in
+			<foreach collection="memberIdArray" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startTime!=null and startTime!=''">
+			AND create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			AND create_time &lt;= #{endTime}
+		</if>
+	</where>
+  </sql>
+	<select id="pageExpert" parameterType="map" resultMap="tjExpertSetAdminResultMap">
+		SELECT  member_id ,level,create_time,operater_name FROM tj_expert_set_info
+		<include refid="query_PageExpert_condition"/>
+		limit #{startIndex},#{pageSize}
+	</select>  
+
+  
+   <insert id="insertExpert" parameterType="TjExpertSetInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into tj_expert_set_info
+    (member_id, level,operater_name, 
+    description, create_time, update_time) 
+    VALUES(#{memberId},#{level}, #{operaterName},#{description},#{createTime},#{updateTime}) 
+  </insert>
+  
+  
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_expert_set_info
+     <include refid="query_PageExpert_condition"/> 
+  </select>
+
+  
+  <update id="updateByMemberId" parameterType="map" >
+    update tj_expert_set_info
+    SET update_time = now()
+ 
+      <if test="level != null" >
+       , level = #{level}
+      </if>
+      <if test="description != null and description!=''" >
+        ,description = #{description}
+      </if>
+      <if test="createTime != null and createTime!=''" >
+        ,create_time = #{createTime}
+      </if>
+      
+    where member_id = #{memberId}
+  </update>
+  
+</mapper>

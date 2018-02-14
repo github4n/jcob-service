@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjExpertInfoMapper" >
+  <resultMap id="tjExpertInfoResultMap" type="TjExpertInfo" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="level" property="level"  />
+    <result column="record" property="record"  />
+    <result column="win_ratio" property="winRatio"  />
+    <result column="half_month_win_ratio" property="halfMonthWinRatio"  />
+    <result column="month_win_ratio" property="monthWinRatio"  />
+    <result column="attention_me" property="attentionMe"  />
+    <result column="attention_other" property="attentionOther"  />
+    <result column="opened_count" property="openedCount"  />
+    <result column="half_month_opened_count" property="halfMonthOpenedCount"  />
+    <result column="month_opened_count" property="monthOpenedCount"  />
+    <result column="description" property="description"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+  </resultMap>
+  
+
+    <!--  pageExpertWinRatioByRank resultMap-->
+  <resultMap id="tjExpertWinRatioResult" type="com.aicai.jcob.tjexpert.common.domain.result.TjExpertWinRatioResult" >
+    <result column="member_id" property="memberId" />
+    <result column="month_win_ratio" property="monthWinRatio"  />
+    <result column="win_ratio" property="winRatio"  />
+    <result column="half_month_win_ratio" property="halfMonthWinRatio"  />
+    <!-- <result column="opened_count" property="openedCount"  />
+    <result column="half_month_opened_count" property="halfMonthOpenedCount"  />
+    <result column="month_opened_count" property="monthOpenedCount"  /> -->
+  </resultMap>
+  
+  <resultMap id="tjExpertAdminWinRatioResultMap" type="com.aicai.jcob.tjexpert.common.domain.result.TjExpertAdminWinRatioResult" >
+     <id column="id" property="id"  />
+     <result column="member_id" property="memberId" />
+    <result column="level" property="level"  />
+    <result column="nick_name" property="nickName"  />
+    <result column="month_win_ratio" property="monthWinRatio"  />
+    <result column="win_ratio" property="winRatio"  />
+    <result column="half_month_win_ratio" property="halfMonthWinRatio"  />
+    <result column="opened_count" property="openedCount"  />
+    <result column="half_month_opened_count" property="halfMonthOpenedCount"  />
+    <result column="month_opened_count" property="monthOpenedCount"  />
+     <result column="record" property="record"  />
+  </resultMap>
+  
+ <sql id="Base_Column_List" >
+    id, member_id, level, record, win_ratio,half_month_win_ratio, month_win_ratio,attention_me, attention_other, opened_count,
+    half_month_opened_count,month_opened_count,description, create_time, update_time
+  </sql>
+  
+  <sql id="query_where_condition" >
+	<where>
+		1=1
+		<if test="memberIdArr!=null">
+		AND member_id in
+			<foreach collection="memberIdArr" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="level!=null">
+			AND level = #{level}
+		</if>	
+		<if test="startTime!=null and startTime!=''">
+			AND create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			AND create_time &lt;= #{endTime}
+		</if>
+	</where>
+  </sql>
+  <!--queryPageExpertInfo  -->
+  <select id="queryPageExpertInfo" parameterType="map" resultMap="tjExpertInfoResultMap">
+     select 
+    <include refid="Base_Column_List" />
+     from tj_expert_info
+     <include refid="query_where_condition"/>
+    limit #{startIndex},#{pageSize}
+  </select>
+    <!--queryExpertInfoCount  -->
+  <select id="queryExpertInfoCount"  parameterType="map" resultType="java.lang.Integer" >
+  select count(1)
+   from tj_expert_info
+     <include refid="query_where_condition"/>
+  </select>
+
+	 <sql id="query_PageExpert_condition" >
+		<if test="memberIdArray!=null">
+		AND tj_expert_info.member_id in
+			<foreach collection="memberIdArray" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="level!=null">
+			AND level= #{level}
+		</if>	
+		<if test="startTime!=null and startTime!=''">
+			AND tj_expert_level_log.create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			AND tj_expert_level_log.create_time &lt;= #{endTime}
+		</if>
+  </sql>
+	<select id="pageExpertLog" parameterType="map" resultMap="tjExpertInfoResultMap">
+		SELECT DISTINCT(tj_expert_info.member_id),tj_expert_info.level FROM tj_expert_level_log,tj_expert_info
+		WHERE  tj_expert_level_log.member_id  = tj_expert_info.member_id
+		<include refid="query_PageExpert_condition"/>
+		ORDER BY tj_expert_level_log.create_time DESC,tj_expert_info.id DESC
+		limit #{startIndex},#{pageSize}
+	</select>  
+	
+	<!-- pageExpertWinRatio -->
+	<select id="pageExpertWinRatio" parameterType="map" resultMap="tjExpertAdminWinRatioResultMap">
+		select  e.id,member_id,level,m.nick_name nick_name,month_win_ratio,win_ratio,
+		half_month_win_ratio,opened_count,half_month_opened_count,month_opened_count,record
+		from tj_expert_info e left join member m on e.member_id=m.id
+      <include refid="query_PageWinRatio_condition"/>
+      order by 
+      <choose>
+			<when test="condition.orderType == 1">
+				  <include refid="getRatioType"/> desc
+			</when>
+			<when test="condition.orderType == 2">
+			   	  <include refid="getRatioType"/> asc
+			</when>
+			<otherwise>e.id asc</otherwise>
+		</choose>
+      limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!--  queryWinRatioCount-->
+	 <select id="queryWinRatioCount" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_expert_info e left join member m on e.member_id=m.id
+     <include refid="query_PageWinRatio_condition"/>
+  </select>
+  
+	 <!--  query_PageWinRatio_condition-->
+	<sql id="query_PageWinRatio_condition" >
+   <where>
+		<if test="condition.memberId != null">
+			AND e.member_id = #{condition.memberId}
+		</if>
+		<if test="condition.level!=null">
+			AND level= #{condition.level}
+		</if>
+		<if test="condition.nickName!=null and condition.nickName!=''">
+			and m.nick_name = #{condition.nickName}
+		</if>
+		<if test="condition.phone!=null and condition.phone!=''">
+			AND m.phone= #{condition.phone}
+		</if>
+		<if test="condition.startTime!=null and condition.startTime!=''">
+			AND e.create_time &gt;= #{condition.startTime}
+		</if>
+		<if test="condition.endTime!=null and condition.endTime!=''">
+			AND e.create_time &lt;= #{condition.endTime}
+		</if>
+		<if test="condition.day!=null">
+		<if test="condition.queryStartWinRatio!=null and condition.queryStartWinRatio!=''">
+			AND <include refid="getRatioType"/> &gt;= #{condition.queryStartWinRatio}
+		</if>
+		<if test="condition.queryEndWinRatio!=null and condition.queryEndWinRatio!=''">
+			AND <include refid="getRatioType"/> &lt;= #{condition.queryEndWinRatio}
+		</if>
+		</if>
+	</where>
+  </sql>
+
+	<sql id="getRatioType">
+		<choose>
+			<when test="condition.day == 7">
+				win_ratio
+			</when>
+			<when test="condition.day == 15">
+				half_month_win_ratio
+			</when>
+			<when test="condition.day == 30">
+				month_win_ratio
+			</when>
+			<otherwise></otherwise>
+		</choose>
+	</sql>
+	
+  <select id="selectBymemberId" resultMap="tjExpertInfoResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tj_expert_info
+    where member_id = #{memberId}
+  </select>
+  
+  <select id="queryTjExpertInfoByMemberIdArray" resultMap="tjExpertInfoResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tj_expert_info
+    where member_id in 
+    
+    <foreach collection="idArray" item="id" index="index" open="(" separator="," close=")">
+    	#{id}
+    </foreach>
+    
+  </select>
+  
+  <select id="pageTjExpertInfoByLevelArray" resultMap="tjExpertInfoResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from tj_expert_info
+    where level in 
+    <foreach collection="levelArray" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+	</foreach>
+	 order by  attention_me desc,id desc
+    limit #{startIndex},#{pageSize}
+  </select>
+  
+	<select id="pageTjExpertInfoByLevelCount" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_expert_info
+     where level in 
+    <foreach collection="levelArray" item="item" index="index" open="(" separator="," close=")">
+				#{item}
+	</foreach>
+  </select>
+  <!-- pageTestExpertWinRatioByRank -->
+  <select id="pageTestExpertWinRatioByRank" resultMap="tjExpertWinRatioResult" parameterType="map">
+  select member_id,win_ratio from tj_expert_info
+  where opened_count&gt;= #{leastCountPlan} and level =1 ORDER BY win_ratio DESC ,id DESC
+  limit #{startIndex},#{pageSize}
+  </select>
+  <!--rankWinRatioCount  -->
+  <select id="rankWinRatioCount" parameterType="map" resultType="java.lang.Integer">
+  select count(1) from tj_expert_info
+  where opened_count&gt;= #{leastCountPlan} and level =1
+  </select>
+   <!-- pageTestExpertMonthWinRatioByRank -->
+  <select id="pageTestExpertMonthWinRatioByRank" resultMap="tjExpertWinRatioResult" parameterType="map">
+  select member_id,month_win_ratio from tj_expert_info
+  where month_opened_count&gt;= #{leastCountPlan} and level =1 ORDER BY month_win_ratio DESC,id DESC
+  limit #{startIndex},#{pageSize}
+  </select>
+  <!--rankMonthWinRatioCount  -->
+  <select id="rankMonthWinRatioCount" parameterType="map" resultType="java.lang.Integer">
+  select count(1)  from tj_expert_info
+  where month_opened_count&gt;= #{leastCountPlan} and level =1
+  </select>
+   <!-- pageTestExpertHalfMonthWinRatioByRank -->
+  <select id="pageTestExpertHalfMonthWinRatioByRank" resultMap="tjExpertWinRatioResult" parameterType="map">
+  select member_id,half_month_win_ratio from tj_expert_info
+  where half_month_opened_count&gt;= #{leastCountPlan} and level =1 ORDER BY half_month_win_ratio DESC ,id DESC
+  limit #{startIndex},#{pageSize}
+  </select>
+  <!--rankHalfMonthWinRatioCount  -->
+  <select id="rankHalfMonthWinRatioCount" parameterType="map" resultType="java.lang.Integer">
+  select count(1) from tj_expert_info
+  where half_month_opened_count&gt;= #{leastCountPlan} and level =1
+  </select>
+   <insert id="insertExpert" parameterType="TjExpertInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into tj_expert_info
+    (member_id, level, record, win_ratio,month_win_ratio,half_month_win_ratio, attention_me, attention_other, 
+    opened_count,half_month_opened_count,month_opened_count,description, create_time, update_time) 
+    VALUES(#{memberId},#{level}, #{record},#{winRatio},#{monthWinRatio},#{halfMonthWinRatio},#{attentionMe},#{attentionOther},#{openedCount},#{halfMonthOpenedCount},#{monthOpenedCount},#{description},#{createTime},#{updateTime}) 
+  </insert>
+  
+  
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer" >
+    SELECT COUNT(DISTINCT tj_expert_info.member_id)  FROM tj_expert_level_log,tj_expert_info
+		WHERE tj_expert_level_log.member_id  = tj_expert_info.member_id
+     <include refid="query_PageExpert_condition"/> 
+  </select>
+
+  
+  <update id="updateByMemberId" parameterType="map" >
+    update tj_expert_info
+    SET update_time = now()
+ 
+      <if test="level != null" >
+       , level = #{level}
+      </if>
+      <if test="record != null and record!=''" >
+        ,record = #{record}
+      </if>
+      <if test="winRatio != null" >
+        ,win_ratio = #{winRatio}
+      </if>
+      <if test="halfMonthWinRatio != null" >
+        ,half_month_win_ratio = #{halfMonthWinRatio}
+      </if>
+      <if test="monthWinRatio != null" >
+        ,month_win_ratio = #{monthWinRatio}
+      </if>
+      <if test="attentionMe != null" >
+        ,attention_me = #{attentionMe}
+      </if>
+      <if test="attentionOther != null" >
+        ,attention_other = #{attentionOther}
+      </if>
+       <if test="monthOpenedCount != null" >
+        ,month_opened_count = #{monthOpenedCount}
+      </if>
+       <if test="halfMonthOpenedCount != null" >
+        ,half_month_opened_count = #{halfMonthOpenedCount}
+      </if>
+       <if test="openedCount != null" >
+        ,opened_count = #{openedCount}
+      </if>
+      <if test="description != null and description!=''" >
+        ,description = #{description}
+      </if>
+      <if test="createTime != null and createTime!=''" >
+        ,create_time = #{createTime}
+      </if>
+      
+    where member_id = #{memberId}
+  </update>
+  <!-- updateExpertRecord -->
+  <update id="updateExpertRecord" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      record = #{newRecord}
+    where member_id = #{memberId} and record = #{oldRecord}
+  </update>
+  
+  
+   <!-- updateExpertWinRatio -->
+  <update id="updateWinRatioAndRecord" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      win_ratio = #{winRatio},month_win_ratio = #{monthWinRatio},
+      half_month_win_ratio = #{halfMonthWinRatio},record = #{record},month_opened_count = #{monthOpenedCount}
+      ,half_month_opened_count = #{halfMonthOpenedCount},opened_count = #{openedCount}
+    where member_id = #{memberId} and win_ratio = #{oldWinRatio} 
+  </update>
+  
+  <!--  updateExpertLevel-->
+   <update id="updateExpertLevel" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      level = #{newLevel}
+    where member_id = #{memberId} and level = #{oldLevel}
+  </update>
+  <!--  attentionMeAdd-->
+  <update id="attentionMeAdd" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      attention_me = attention_me+1
+    where member_id = #{memberId}
+  </update>
+   <!--  attentionMeSub-->
+  <update id="attentionMeSub" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      attention_me = attention_me-1
+    where member_id = #{memberId}
+  </update>
+ <!-- zeroAttentionMe -->
+  <update id="zeroAttentionMe" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      attention_me = 0
+    where member_id = #{memberId}
+  </update>
+   <!--  attentionOtherAdd-->
+  <update id="attentionOtherAdd" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      attention_other = attention_other+1
+    where member_id = #{memberId}
+  </update>
+    <!--  attentionOtherSub-->
+  <update id="attentionOtherSub" parameterType="map" >
+    update tj_expert_info
+    set update_time = now(),
+      attention_other = attention_other-1
+    where member_id = #{memberId}
+  </update>
+  
+  <select id="queryExpertMemberId" parameterType="map" resultType="long">
+      select member_id from tj_expert_info <include refid="queryExpertMemberIdWhere"/>
+      limit #{startIndex},#{pageSize}
+  </select>
+  
+  <sql id="queryExpertMemberIdWhere">
+      <where> level in
+				<foreach collection="expertLevel" item="level"
+					open="(" separator="," close=")">
+					#{level.index}
+				</foreach>
+		</where>
+  </sql>
+  
+   <select id="queryExpertMemberIdCount" parameterType="map" resultType="int">
+       select count(1) from tj_expert_info <include refid="queryExpertMemberIdWhere"/> 
+  </select>
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberHuoyanWalletLogMapper">
+    <resultMap id="BaseResultMap" type="MemberHuoyanWalletLog" >
+    <id column="id" property="id" />
+    <result column="member_id" property="memberId"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="biz_no" property="bizNo"/>
+    <result column="biz_type" property="bizType"/>
+    <result column="wallet_op_type" property="walletOpType"/>
+    <result column="happen_amount" property="happenAmount"/>
+    <result column="end_able_balance" property="endAbleBalance"/>
+    <result column="end_freezed_balance" property="endFreezedBalance"/>
+    <result column="verify_md5" property="verifyMd5"/>
+    <result column="features" property="features"/>
+    <result column="flag_bit" property="flagBit"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="client_type" property="clientType"/>
+    <result column="channel" property="channel"/>
+  </resultMap>
+    <resultMap id="pageWalletLogVoResult" type="com.aicai.jcob.memberwallet.common.domain.result.PageWalletLogVo" >
+    <result column="member_id" property="memberId"/>
+    <result column="nick_name" property="nickName"/>
+    <result column="level" property="expertLevel"/>
+    <result column="biz_type" property="bizType"/>
+    <result column="biz_no" property="bizNo"/>
+    <result column="biz_id" property="bizId"/>
+    <result column="wallet_op_type" property="walletOpType"/>
+    <result column="happen_amount" property="happenAmount"/>
+    <result column="end_able_balance" property="endAbleBalance"/>
+    <result column="create_time" property="createTime"/>
+    <result column="client_type" property="clientType"/>
+    
+    <result column="total_income" property="totalIncome"/>
+    <result column="total_spending" property="totalSpending"/>
+  </resultMap>
+ 
+  <sql id="BASE_COLUMN_LIST" >
+    id, member_id, biz_id, biz_no, biz_type, wallet_op_type, happen_amount, 
+    end_able_balance, end_freezed_balance, verify_md5, features, flag_bit, create_time, update_time,client_type,channel
+  </sql>
+  
+  <select id="selectByWalletLogId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_huoyan_wallet_log
+    WHERE id = #{id}
+  </select>
+  <select id="queryMemberWalletLogByBiz" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_huoyan_wallet_log
+    WHERE 
+    	member_id = #{memberId} 
+    AND biz_type = #{bizType} 
+    AND biz_id = #{bizId} 
+    AND wallet_op_type = #{walletOpType}
+  </select>
+   <select id="pageMemberHuoyanWalletLog" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_huoyan_wallet_log
+    WHERE 
+    	member_id = #{memberId} 
+    	<![CDATA[
+    	AND create_time >= #{beginTime}
+    	AND create_time <#{endTime}
+    	]]>
+    	<if test="bizTypeList!=null">
+    	AND biz_type in 
+    		<foreach collection="bizTypeList" item="bizType" open="(" separator="," close=")">
+    			#{bizType.index}
+    		</foreach>
+    	</if>
+    	<if test="walletOpTypeList!=null">
+    	AND wallet_op_type in 
+    		<foreach collection="walletOpTypeList" item="walletOpType" open="(" separator="," close=")">
+    			#{walletOpType.index}
+    		</foreach>
+    	</if>
+	   ORDER BY create_time desc
+	   LIMIT #{startIndex},#{pageSize}
+  </select>
+  <select id="countMemberHuoyanWalletLog" resultType="int" parameterType="map" >
+    SELECT 
+    	count(id)
+    FROM member_huoyan_wallet_log
+    WHERE 
+    	member_id = #{memberId} 
+    	<![CDATA[
+    	AND create_time >= #{beginTime}
+    	AND create_time <#{endTime}
+    	]]>
+    	<if test="bizTypeList!=null">
+    	AND biz_type in 
+    		<foreach collection="bizTypeList" item="bizType" open="(" separator="," close=")">
+    			#{bizType.index}
+    		</foreach>
+    	</if>
+    	<if test="walletOpTypeList!=null">
+    	AND wallet_op_type in 
+    		<foreach collection="walletOpTypeList" item="walletOpType" open="(" separator="," close=")">
+    			#{walletOpType.index}
+    		</foreach>
+    	</if>
+  </select>
+  
+   <select id="sumMemberHuoyanWalletLogAmount" resultType="java.util.HashMap" parameterType="map" >
+    	select 
+				<!-- abs(sum(case   when biz_type=1 and wallet_op_type = 1 then happen_amount else 0 end) 
+        - sum(case   when biz_type=1 and wallet_op_type = 2 then happen_amount else 0 end))'1',
+		abs(sum(case   when biz_type = 2 and wallet_op_type = 1 then happen_amount else 0 end)
+        - sum(case   when biz_type = 2 and wallet_op_type = 2 then happen_amount else 0 end)) '2',
+		abs(sum(case   when biz_type = 3 and wallet_op_type =1 then happen_amount else 0 end)
+        - sum(case   when biz_type = 3 and wallet_op_type = 2 then happen_amount else 0 end)) '3' -->
+        sum(case   when wallet_op_type = 1 then happen_amount else 0 end) '1',
+        sum(case   when wallet_op_type = 2 then happen_amount else 0 end) '2'
+		from member_huoyan_wallet_log 
+		where 
+		member_id = #{memberId}
+    	 <![CDATA[
+    	and create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+  </select>
+  
+  <insert id="saveWalletLog" parameterType="MemberHuoyanWalletLog" >
+    INSERT INTO member_huoyan_wallet_log(
+	       member_id,
+		   biz_id,
+		   biz_no,
+		   biz_type,
+		   wallet_op_type,
+		   happen_amount,
+		   end_able_balance,
+		   end_freezed_balance,
+		   verify_md5,
+		   features,
+		   flag_bit,
+		   create_time,
+		   update_time,
+		   client_type,
+	       channel)
+	VALUES(#{memberId},
+		   #{bizId},
+		   #{bizNo},
+		   #{bizType},
+		   #{walletOpType},
+		   #{happenAmount},
+		   #{endAbleBalance},
+		   #{endFreezedBalance},
+		   #{calculateVerifyMd5},
+		   #{features},
+		   #{flagBit},
+		   #{createTime},
+		   #{updateTime},
+		   #{clientType},
+	  	   #{channel}
+	   		)
+  </insert>
+
+
+	<select id="adminPageMemberHuoyanWalletLog" resultMap="pageWalletLogVoResult" parameterType="map">
+		SELECT
+		log.id,log.member_id,m.nick_name,expert.level,log.biz_type,log.biz_no,log.biz_id,log.happen_amount,log.create_time,log.client_type,log.wallet_op_type,log.end_able_balance
+		FROM member_huoyan_wallet_log log
+		left join member m on log.member_id = m.id
+		left join tj_expert_info expert on log.member_id = expert.member_id
+		<include refid="adminPageMemberHuoyanWalletLogWhere" />
+		ORDER BY create_time desc
+		LIMIT #{startIndex},#{pageSize}
+	</select>
+
+	<sql id="adminPageMemberHuoyanWalletLogWhere">
+		<where>
+		    <if test="option.startDate != null">
+    			and log.create_time >= #{option.startDate}
+			</if>
+			<if test="option.endDate != null">
+     		 	<![CDATA[and log.create_time <=#{option.endDate}]]>
+			</if>
+			<if test="option.memberIdList != null">
+				and log.member_id in
+				<foreach collection="option.memberIdList" item="memberId" open="("
+					separator="," close=")">
+					#{memberId}
+				</foreach>
+			</if>
+			<if test="option.tjExpertLevelList != null">
+				and expert.level in
+				<foreach collection="option.tjExpertLevelList" item="expertLevel"
+					open="(" separator="," close=")">
+					#{expertLevel.index}
+				</foreach>
+			</if>
+			<if test="option.bizTypeList!=null">
+				AND log.biz_type in
+				<foreach collection="option.bizTypeList" item="bizType" open="("
+					separator="," close=")">
+					#{bizType.index}
+				</foreach>
+			</if>
+			<if test="option.leftAndEqualAmount != null">
+    			<![CDATA[and log.happen_amount >= #{option.leftAndEqualAmount}]]>
+			</if>
+			<if test="option.rightAndEqualAmount != null">
+     		 	<![CDATA[and log.happen_amount <= #{option.rightAndEqualAmount}]]>
+			</if>
+			<if test="option.phone != null and option.phone != ''">
+				and m.phone = #{option.phone}
+			</if>
+			<if test="option.nickName != null and option.nickName != ''">
+				and m.nick_name = #{option.nickName}
+			</if>
+		</where>
+	</sql>
+
+	<select id="adminCountMemberHuoyanWalletLog" resultType="java.lang.Integer" parameterType="map">
+		SELECT count(1)
+		FROM member_huoyan_wallet_log log
+		left join member m on log.member_id = m.id
+		left join tj_expert_info expert on log.member_id = expert.member_id
+		<include refid="adminPageMemberHuoyanWalletLogWhere" />
+	</select>
+	
+	<select id="adminSumMemberHuoyanWalletLog" resultMap="pageWalletLogVoResult" parameterType="map">
+		SELECT IFNULL(SUM(IF(wallet_op_type=2,happen_amount,0)),0) total_income,
+			   IFNULL(SUM(IF(wallet_op_type=1,happen_amount,0)),0) total_spending
+		FROM member_huoyan_wallet_log log
+		left join member m on log.member_id = m.id
+		left join tj_expert_info expert on log.member_id = expert.member_id
+		<include refid="adminPageMemberHuoyanWalletLogWhere" />
+	</select>
+	
+</mapper>

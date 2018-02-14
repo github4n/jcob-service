@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberOperLogMapper" >
+  <resultMap id="BaseResultMap" type="MemberOperLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="oper_type" property="operType" jdbcType="TINYINT" />
+    <result column="client_type" property="clientType" jdbcType="TINYINT" />
+    <result column="channel" property="channel" jdbcType="INTEGER" />
+    <result column="user_ip" property="userIp" jdbcType="VARCHAR" />
+    <result column="front_server_ip" property="frontServerIp" jdbcType="VARCHAR" />
+    <result column="back_server_ip" property="backServerIp" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="AttentionLogResultMap" type="com.aicai.jcob.tjexpert.common.domain.result.TjAttentionLogAdminResult" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="oper_type" property="operType" jdbcType="TINYINT" />
+    <result column="client_type" property="clientType" jdbcType="TINYINT" /> 
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, oper_type, client_type, channel, user_ip, front_server_ip, back_server_ip, 
+    remark, create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_oper_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <!--  countAttentionOperLog-->
+	<select id="countAttentionOperLog" resultType="int" parameterType="map">
+	SELECT count(1) FROM member_oper_log
+	WHERE oper_type IN(4,5)
+		<if test="memberIdArr != null">
+		and member_id in
+			<foreach collection="memberIdArr" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="beginTime != null">
+			and create_time <![CDATA[ >= ]]>#{beginTime}
+		</if>
+		<if test="endTime != null">
+			and create_time <![CDATA[ <= ]]>#{endTime}
+		</if>
+		<if test="remark != null and remark!=''">
+			and remark LIKE CONCAT('%',#{remark},'%')
+		</if>
+   </select> 
+     <!--  pageAttentionOperLog-->
+	<select id="pageAttentionOperLog" resultMap="AttentionLogResultMap" parameterType="map">
+		SELECT
+		id, member_id, oper_type, client_type,remark,create_time
+		FROM member_oper_log
+		WHERE oper_type IN(4,5)
+		<if test="memberIdArr != null">
+		and member_id in
+			<foreach collection="memberIdArr" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="beginTime != null">
+			and create_time <![CDATA[ >= ]]>#{beginTime}
+		</if>
+		<if test="endTime != null">
+			and create_time <![CDATA[ <= ]]>#{endTime}
+		</if>
+		<if test="remark != null and remark!=''">
+			and remark LIKE CONCAT('%',#{remark},'%')
+		</if>
+		limit #{startIndex},#{pageSize}
+	</select>
+  <select id="queryMemberOperLogByMemberAndOperTypeCreateTime" resultMap="BaseResultMap" parameterType="map" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_oper_log
+    where 1 = 1
+    
+    <if test="memberId != null">
+    	and member_id = #{memberId}
+    </if>
+    
+    <if test="operType != null">
+    	and oper_type = #{operType}
+    </if>
+    
+    <if test="beginTime != null">
+    	and create_time <![CDATA[ >= ]]> #{beginTime}
+    </if>
+    
+    <if test="endTime != null">
+    	and create_time <![CDATA[ <= ]]> #{endTime}
+    </if>
+    
+  </select>
+
+  <insert id="insertSelective" parameterType="MemberOperLog" >
+    <selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+    
+    insert into member_oper_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="operType != null" >
+        oper_type,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="userIp != null" >
+        user_ip,
+      </if>
+      <if test="frontServerIp != null" >
+        front_server_ip,
+      </if>
+      <if test="backServerIp != null" >
+        back_server_ip,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="operType != null" >
+        #{operType,jdbcType=TINYINT},
+      </if>
+      <if test="clientType != null" >
+        #{clientType,jdbcType=TINYINT},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=INTEGER},
+      </if>
+      <if test="userIp != null" >
+        #{userIp,jdbcType=VARCHAR},
+      </if>
+      <if test="frontServerIp != null" >
+        #{frontServerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="backServerIp != null" >
+        #{backServerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

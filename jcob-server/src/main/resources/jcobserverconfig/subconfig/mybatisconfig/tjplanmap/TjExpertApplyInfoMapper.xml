@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjExpertApplyInfoMapper" >
+  <resultMap id="tjExpertApplyInfoResultMap" type="TjExpertApplyInfo" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="apply_reason" property="applyReason"  />
+    <result column="win_img_path" property="winImgPath"  />
+    <result column="check_status" property="checkStatus"  />
+    <result column="cancel_reason" property="cancelReason"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+  </resultMap>
+  
+ 
+ <sql id="Base_Column_List" >
+    id, member_id, apply_reason, win_img_path, check_status, cancel_reason, create_time, update_time
+  </sql>
+  
+    
+  <sql id="query_PageExpert_condition" >
+  <where>
+		1=1
+		<if test="memberIdArr!=null">
+		AND member_id in
+			<foreach collection="memberIdArr" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="checkStatus!=null">
+			AND check_status = #{checkStatus}
+		</if>	
+		<if test="startTime!=null and startTime!=''">
+			AND create_time &gt;= #{startTime}
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			AND create_time &lt;= #{endTime}
+		</if>
+	</where>
+  </sql>
+	<select id="selectDetail" parameterType="map" resultMap="tjExpertApplyInfoResultMap">
+			SELECT member_id,check_status,apply_reason,win_img_path,create_time FROM tj_expert_apply_info 
+		WHERE id = #{id}
+	</select>  
+	
+	<select id="pageExpertApplyInfo" parameterType="map" resultMap="tjExpertApplyInfoResultMap">
+			SELECT id, member_id,check_status,create_time FROM tj_expert_apply_info 
+		<include refid="query_PageExpert_condition"/>
+		
+		limit #{startIndex},#{pageSize}
+	</select>  
+  <select id="selectBymemberId" resultMap="tjExpertApplyInfoResultMap" parameterType="java.lang.Long" >
+		SELECT * FROM tj_expert_apply_info WHERE member_id=#{memberId}
+  </select>
+   <select id="queryUnderWayExpertAplly" resultMap="tjExpertApplyInfoResultMap" parameterType="java.lang.Long" >
+		SELECT * FROM tj_expert_apply_info WHERE member_id=#{memberId} and check_status in (0,1)
+  </select>
+  <select id="queryLastExpertAplly" resultMap="tjExpertApplyInfoResultMap" parameterType="java.lang.Long" >
+		SELECT * FROM tj_expert_apply_info WHERE member_id=#{memberId} order by create_time desc
+		limit 0,1
+  </select>
+  
+  
+   <insert id="insertExpertApplyInfo" parameterType="TjExpertApplyInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into tj_expert_apply_info
+    (member_id, apply_reason, win_img_path, check_status, cancel_reason, create_time, update_time) 
+    VALUES(#{memberId},#{applyReason}, #{winImgPath},#{checkStatus},#{cancelReason},#{createTime},#{updateTime}) 
+  </insert>
+  
+  
+  
+  <select id="queryCount" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_expert_apply_info
+     <include refid="query_PageExpert_condition"/> 
+  </select>
+
+  
+  <update id="updateCheckStatus" parameterType="map" >
+    update tj_expert_apply_info
+    SET update_time = now()
+      <if test="checkStatus != null" >
+       , check_status = #{checkStatus}
+      </if>
+      <if test="cancelReason != null and cancelReason!=''" >
+        ,cancel_reason = #{cancelReason}
+      </if>  
+    where member_id = #{memberId}
+  </update>
+  
+</mapper>

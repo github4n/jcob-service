@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjAttentionExpertMapper" >
+  <resultMap id="BaseResultMap" type="TjAttentionExpert" >
+    <id column="id" property="id" />
+    <result column="member_id" property="memberId" />
+    <result column="attention_member_id" property="attentionMemberId"  />
+    <result column="status" property="status"  />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+  </resultMap>
+
+  <resultMap id="AttentionExpertMap" type="com.aicai.jcob.tjexpert.common.domain.result.TjAttentionExpertResult" >
+    <id column="id" property="id" />
+    <result column="member_id" property="memberId" />
+    <result column="attention_member_id" property="attentionMemberId"  />
+    <result column="status" property="status"  />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="description" property="expertDesc" />
+    <result column="level" property="expertLevel" />
+    <result column="record" property="record" />
+    
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    id, member_id, attention_member_id, status, create_time, update_time
+  </sql>
+  
+   <sql id="query_where_condition" >
+		1=1
+		<if test="memberId!=null and memberId!=''">
+			AND member_id = #{memberId}
+		</if>
+		<if test="attentionMemberId!=null and attentionMemberId!=''">
+			AND attention_member_id = #{attentionMemberId}
+		</if>
+		<if test="status!=null">
+			AND status = #{status}
+		</if>	
+		
+		
+  </sql>
+  <!-- 查询关注的专家 的memberId-->
+  <select id="selectAttentionExpertByMemberId" resultType="java.lang.Long" parameterType="map" >
+    select 
+    attention_member_id
+    from tj_attention_expert
+    where member_id = #{memberId} and status = 1
+  </select>
+ <!-- selectFansByExpertMemberId -->
+  <select id="selectFansByExpertMemberId" resultType="java.lang.Long" parameterType="map" >
+    select 
+    member_id
+    from tj_attention_expert
+    where attention_member_id = #{expertMemberId} and status = 1
+  </select>
+ <!-- pageMyAttentionByMemberIdArray -->
+   <select id="pageMyAttentionByMemberIdArray" resultMap="BaseResultMap" parameterType="map">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from tj_attention_expert 	
+  	where member_id in 
+    <foreach collection="memberIdArray" item="item" index="index" open="(" separator="," close=")">
+		#{item}
+	</foreach> 	
+    and status=1  
+    <if test="startTime!=null and startTime!=''">
+		AND update_time &gt;= #{startTime}
+	</if>
+	<if test="endTime!=null and endTime!=''">
+		AND update_time &lt;= #{endTime}
+	</if>	
+  	order by update_time desc 	
+  	 limit #{startIndex},#{pageSize}
+  </select>
+  <!-- countMyAttention -->
+   <select id="countMyAttention" resultType="int" parameterType="map">
+  	select count(1) from tj_attention_expert
+  	where member_id in 
+    <foreach collection="memberIdArray" item="item" index="index" open="(" separator="," close=")">
+		#{item}
+	</foreach> 	
+	 <if test="startTime!=null and startTime!=''">
+		AND update_time &gt;= #{startTime}
+	</if>
+	<if test="endTime!=null and endTime!=''">
+		AND update_time &lt;= #{endTime}
+	</if>	
+    and status=1
+  </select>
+  
+  
+   <!-- pageAttentionMeByattentionMemberIdArray -->
+   <select id="pageAttentionMeByattentionMemberIdArray" resultMap="BaseResultMap" parameterType="map">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from tj_attention_expert 	
+  	where attention_member_id in 
+    <foreach collection="attentionMemberIdArray" item="item" index="index" open="(" separator="," close=")">
+		#{item}
+	</foreach> 	
+	 <if test="startTime!=null and startTime!=''">
+		AND update_time &gt;= #{startTime}
+	</if>
+	<if test="endTime!=null and endTime!=''">
+		AND update_time &lt;= #{endTime}
+	</if>	
+    and status=1  	
+  	order by update_time desc 	
+  	limit #{startIndex},#{pageSize}
+  </select>
+  <!-- countAttentionMe -->
+   <select id="countAttentionMe" resultType="int" parameterType="map">
+  	select count(1) from tj_attention_expert
+  	where attention_member_id in 
+    <foreach collection="attentionMemberIdArray" item="item" index="index" open="(" separator="," close=")">
+		#{item}
+	</foreach> 
+	 <if test="startTime!=null and startTime!=''">
+		AND update_time &gt;= #{startTime}
+	</if>
+	<if test="endTime!=null and endTime!=''">
+		AND update_time &lt;= #{endTime}
+	</if>		
+    and status=1
+  </select>
+  <insert id="insert" parameterType="TjAttentionExpert" >
+    insert into tj_attention_expert (member_id, attention_member_id, 
+      status, create_time, update_time
+      )
+    values (#{memberId}, #{attentionMemberId}, 
+      #{status}, #{createTime}, #{updateTime}
+      )
+  </insert>
+  
+<!--   <select id="countAttentionNum" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_attention_expert
+    where member_id=#{expertMemberId} and status=1
+  </select> -->
+  <!--queryIsAttention  -->
+   <select id="queryIsAttention" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_attention_expert
+    where attention_member_id=#{expertMemberId} and member_id=#{memberId} and status=1
+  </select>
+  <!-- hasAttentionLog -->
+   <select id="hasAttentionLog" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_attention_expert
+    where attention_member_id=#{expertMemberId} and member_id=#{memberId}
+  </select>
+  <!--pageExpertAttention  -->
+   <select id="pageExpertAttention" parameterType="map" resultMap="AttentionExpertMap" >
+    select a.attention_member_id,e.level,e.record,e.description
+    from tj_attention_expert a,tj_expert_info e
+    where a.attention_member_id=e.member_id and a.member_id=#{expertMemberId} and a.status=1
+    ORDER BY a.update_time ASC  	
+   limit #{startIndex},#{pageSize}
+  </select>
+  <!-- countExpertAttention -->
+  <select id="countExpertAttention" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_attention_expert a,tj_expert_info e
+    where a.attention_member_id=e.member_id and a.member_id=#{expertMemberId} and a.status=1
+  </select>
+  
+   <!--pageExpertFans  -->
+   <select id="pageExpertFans" parameterType="map" resultMap="AttentionExpertMap" >
+    select a.member_id,e.level,e.record,e.description
+    from tj_attention_expert a,tj_expert_info e
+    where a.member_id=e.member_id and a.attention_member_id=#{expertMemberId} and a.status=1
+    ORDER BY e.level DESC,a.update_time ASC		
+  	 limit #{startIndex},#{pageSize}
+  </select>
+  <!-- countExpertFans -->
+  <select id="countExpertFans" parameterType="map" resultType="java.lang.Integer" >
+    select count(*) from tj_attention_expert a,tj_expert_info e
+    where a.member_id=e.member_id and a.attention_member_id=#{expertMemberId} and a.status=1
+  </select>
+  
+    <update id="updateAttentionStatus" parameterType="map" >
+    update tj_attention_expert
+    SET update_time = now()
+     
+      <if test="status != null" >
+        ,status = #{status}
+      </if>
+      <if test="createTime != null and createTime!=''" >
+        ,create_time = #{createTime}
+      </if>
+      
+    where member_id = #{memberId} and attention_member_id=#{attentionMemberId}
+  </update>
+
+</mapper>

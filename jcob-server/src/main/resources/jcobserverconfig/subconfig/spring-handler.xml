@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util 
+    	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+    	http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean name="jcZqSpfCheckPlanEffectHandler" class="com.aicai.jcob.game.handler.impl.JcZqSpfCheckPlanEffectHandler" />
+	<bean name="jcZqRqspfCheckPlanEffectHandler" class="com.aicai.jcob.game.handler.impl.JcZqRqspfCheckPlanEffectHandler" />
+	<bean name="jcZqYPCheckPlanEffectHandler" class="com.aicai.jcob.game.handler.impl.JcZqYPCheckPlanEffectHandler" />
+	<bean name="jcZqDXQCheckPlanEffectHandler" class="com.aicai.jcob.game.handler.impl.JcZqDXQCheckPlanEffectHandler" />
+	
+	<util:map id="gameCheckPlanEffectHandlerMap">
+		<entry key="#{T(com.aicai.jcob.game.common.domain.constant.GameType).JJ_ZC_RQ_SPF}"  value-ref="jcZqRqspfCheckPlanEffectHandler" />
+		<entry key="#{T(com.aicai.jcob.game.common.domain.constant.GameType).JJ_ZC_SPF}"  value-ref="jcZqSpfCheckPlanEffectHandler" />
+		<entry key="#{T(com.aicai.jcob.game.common.domain.constant.GameType).JJ_ZC_WW_DXQ}"  value-ref="jcZqDXQCheckPlanEffectHandler" />
+		<entry key="#{T(com.aicai.jcob.game.common.domain.constant.GameType).JJ_ZC_YP}"  value-ref="jcZqYPCheckPlanEffectHandler" />
+	</util:map>
+	
+</beans>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ClientUpgradeMapper">
+	<resultMap id="BaseResultMap" type="ClientUpgrade">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="cur_version" property="curVersion" />
+		<result column="old_version" property="oldVersion" />
+		<result column="client_type" property="clientType" />
+		<result column="app_url" property="appUrl" />
+		<result column="app_desc" property="appDesc" />
+		<result column="upgrade_status" property="upgradeStatus" />
+		<result column="upgrade_type" property="upgradeType" />
+		<result column="model" property="model" />
+		<result column="channel" property="channel" />
+		<result column="operator" property="operator" />
+		<result column="update_time" property="updateTime" />
+		<result column="create_time" property="createTime" />
+		<result column="is_del" property="isDel" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, cur_version, old_version, client_type, app_url, app_desc, upgrade_type, upgrade_status,
+		model,channel,operator,update_time,create_time,is_del
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long">
+		select
+		<include refid="Base_Column_List" />
+		from client_upgrade
+		where id = #{id}
+	</select>
+
+	<select id="queryAllVersion" resultType="String" parameterType="map">
+		SELECT distinct cur_version FROM client_upgrade
+		<where>
+			<if test="clientType != null">
+				and client_type = #{clientType}
+			</if>
+			and model = 0 and is_del = 0
+		</where>
+		ORDER BY cur_version DESC
+	</select>
+
+	<select id="selectAllVersion" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM client_upgrade
+		<where>
+			<if test="clientType != null">
+				and client_type = #{clientType}
+			</if>
+			and model = 0 and is_del = 0
+		</where>
+		ORDER BY cur_version DESC
+	</select>
+
+
+	<select id="queryAllChannel" resultType="int">
+		SELECT distinct channel FROM client_upgrade where channel is not null
+		and model = 2 and is_del = 0 ORDER BY channel DESC
+	</select>
+
+	<select id="queryCurVersion" resultMap="BaseResultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from client_upgrade where old_version = #{oldVersion} and client_type= #{clientType} and model=1
+		and channel = #{channel} and is_del = 0 
+		order by id desc
+		limit 1
+	</select>
+	
+	<select id="queryRecentVersion" resultMap="BaseResultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		where
+		channel=#{channel} and client_type= #{clientType} and model = 1 and is_del=0 ORDER BY cur_version DESC ,id DESC
+	</select>
+
+	<select id="countByVersion" resultType="int" parameterType="ClientUpgrade">
+		select count(1) from client_upgrade where
+		<choose>
+			<when test="model==1">
+				old_version = #{oldVersion} and client_type=#{clientType} and channel=#{channel}
+			</when>
+			<when test="model==2">
+				cur_version=#{curVersion} and client_type=#{clientType} and channel=#{channel}
+			</when>
+			<otherwise>
+				cur_version=#{curVersion} and client_type=#{clientType}
+			</otherwise>
+		</choose>
+		and model=#{model} and is_del = 0
+	</select>
+
+	<insert id="insertClientUpgrade" keyProperty="id" parameterType="ClientUpgrade">
+		insert into
+		client_upgrade
+		(cur_version,old_version,client_type, channel,app_url, app_desc, upgrade_type, upgrade_status,model,operator,update_time)
+		values (
+		#{curVersion},
+		#{oldVersion},
+		#{clientType},
+		#{channel},
+		#{appUrl},
+		#{appDesc},
+		#{upgradeType},
+		#{upgradeStatus},
+		#{model},
+		#{operator},
+		now()
+		)
+	</insert>
+
+	<update id="updateByOldVerionChannel" parameterType="ClientUpgrade">
+		update client_upgrade
+		<set>
+		    update_time = now(),
+			<if test="curVersion != null">
+				cur_version = #{curVersion},
+			</if>
+			<if test="appUrl != null">
+				app_url = #{appUrl},
+			</if>
+			<if test="appDesc != null">
+				app_desc = #{appDesc},
+			</if>
+			<if test="upgradeType != null">
+				upgrade_type = #{upgradeType},
+			</if>
+			<if test="operator != null">
+				operator = #{operator},
+			</if>
+		</set>
+		where old_version = #{oldVersion} and client_type=#{clientType} and channel=#{channel} and model=1
+	</update>
+	
+	<update id="updateClientUpgrade" parameterType="ClientUpgrade">
+		update client_upgrade
+		<set>
+		    update_time = now(),
+			<if test="curVersion != null">
+				cur_version = #{curVersion},
+			</if>
+			<if test="oldVersion != null">
+				old_version = #{oldVersion},
+			</if>
+			<if test="clientType != null">
+				client_type = #{clientType},
+			</if>
+			<if test="channel != null">
+				channel = #{channel},
+			</if>
+			<if test="appUrl != null">
+				app_url = #{appUrl},
+			</if>
+			<if test="appDesc != null">
+				app_desc = #{appDesc},
+			</if>
+			<if test="upgradeType != null">
+				upgrade_type = #{upgradeType},
+			</if>
+			<if test="upgradeStatus != null">
+				upgrade_status = #{upgradeStatus},
+			</if>
+			<if test="operator != null">
+				operator = #{operator},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+
+	<select id="queryByPageCount" parameterType="map" resultType="int">
+		select count(1) from client_upgrade
+		<include refid="queryCondition" />
+	</select>
+
+	<select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from client_upgrade
+		<include refid="queryCondition" />
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<sql id="queryCondition">
+		<where>
+		    is_del = 0
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="curVersion != null and curVersion != ''">
+				and cur_version = #{curVersion}
+			</if>
+			<if test="oldVersion != null and oldVersion != '' ">
+				and old_version = #{oldVersion}
+			</if>
+			<if test="clientType != null">
+				and client_type = #{clientType}
+			</if>
+			<if test="model != null">
+				and model = #{model}
+			</if>
+			<if test="channel != null">
+				and channel = #{channel}
+			</if>
+		</where>
+	</sql>
+
+	<delete id="delById" parameterType="int">
+		update client_upgrade set is_del = 1 where id = #{id}
+	</delete>
+
+</mapper>

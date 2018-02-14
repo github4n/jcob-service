@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <description>jcobService dubbo client</description>
+      
+    <dubbo:registry id="jcobServiceClientRegistry"
+                    protocol="${jcobService.dubbo.registry.name}"
+                    client="${jcobService.dubbo.registry.client}"
+                    address="${jcobService.dubbo.registry.address}"
+                    group="dubboservice/jcobService/${jcobService.dubbo.registry.group}"
+                    check="${jcobService.dubbo.consumer.check}"
+                    subscribe="true" file="jcobserviceclient-registry-cache.properties">
+    </dubbo:registry>
+
+    <dubbo:consumer id="jcobserviceConsumer"
+                    registry="jcobServiceClientRegistry"
+                    init="false"
+                    check="${jcobService.dubbo.consumer.check}"
+                    timeout="${jcobService.dubbo.consumer.timeout}"
+                    retries="0"/>
+                    
+</beans>

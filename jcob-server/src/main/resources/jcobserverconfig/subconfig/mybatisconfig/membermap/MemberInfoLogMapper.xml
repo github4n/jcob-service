@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberInfoLogMapper" >
+  <resultMap id="BaseResultMap" type="MemberInfoLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="info_type" property="infoType" jdbcType="TINYINT" />
+    <result column="old_info" property="oldInfo" jdbcType="VARCHAR" />
+    <result column="new_info" property="newInfo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, member_id, status, info_type, old_info, new_info, create_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="MemberInfoLog" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member_info_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_info_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="queryMemberInfoLogWithOption" resultMap="BaseResultMap" parameterType="map" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_info_log
+    where 1 = 1
+    
+     <if test = "memberId != null" >
+     	and member_id = #{memberId}     	
+     </if>
+     
+     <if test="newInfo != null">
+     	and new_info = #{newInfo}
+     </if>
+     
+     <if test = "beginTime != null" >
+      	and create_time <![CDATA[ >= ]]> #{beginTime}
+     </if>
+     
+     <if test="endTime != null">
+     	and create_time <![CDATA[ <= ]]> #{endTime}
+     </if>
+  </select>
+  
+  <select id="queryNotCurrentMemberInfoLog" resultMap="BaseResultMap" parameterType="map" >
+  	select 
+    
+    <include refid="Base_Column_List" />
+    
+    from member_info_log
+    
+    where member_id <![CDATA[ <> ]]> #{memberId} 
+    
+    and new_info = #{newInfo}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from member_info_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="MemberInfoLog" >
+    delete from member_info_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="MemberInfoLog" >
+    insert into member_info_log (id, member_id, status, 
+      info_type, old_info, new_info, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{memberId,jdbcType=BIGINT}, #{status,jdbcType=BIT}, 
+      #{infoType,jdbcType=TINYINT}, #{oldInfo,jdbcType=VARCHAR}, #{newInfo,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="MemberInfoLog" >
+    <selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+    
+    insert into member_info_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="infoType != null" >
+        info_type,
+      </if>
+      <if test="oldInfo != null" >
+        old_info,
+      </if>
+      <if test="newInfo != null" >
+        new_info,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="infoType != null" >
+        #{infoType,jdbcType=TINYINT},
+      </if>
+      <if test="oldInfo != null" >
+        #{oldInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="newInfo != null" >
+        #{newInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="MemberInfoLog" resultType="java.lang.Integer" >
+    select count(*) from member_info_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update member_info_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.memberId != null" >
+        member_id = #{record.memberId,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.infoType != null" >
+        info_type = #{record.infoType,jdbcType=TINYINT},
+      </if>
+      <if test="record.oldInfo != null" >
+        old_info = #{record.oldInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newInfo != null" >
+        new_info = #{record.newInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update member_info_log
+    set id = #{record.id,jdbcType=BIGINT},
+      member_id = #{record.memberId,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=BIT},
+      info_type = #{record.infoType,jdbcType=TINYINT},
+      old_info = #{record.oldInfo,jdbcType=VARCHAR},
+      new_info = #{record.newInfo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <!-- 
+  <update id="updateByPrimaryKeySelective" parameterType="MemberInfoLog" >
+    update member_info_log
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="infoType != null" >
+        info_type = #{infoType,jdbcType=TINYINT},
+      </if>
+      <if test="oldInfo != null" >
+        old_info = #{oldInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="newInfo != null" >
+        new_info = #{newInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   -->
+  <update id="updateByPrimaryKey" parameterType="MemberInfoLog" >
+    update member_info_log
+    set member_id = #{memberId,jdbcType=BIGINT},
+      status = #{status,jdbcType=BIT},
+      info_type = #{infoType,jdbcType=TINYINT},
+      old_info = #{oldInfo,jdbcType=VARCHAR},
+      new_info = #{newInfo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

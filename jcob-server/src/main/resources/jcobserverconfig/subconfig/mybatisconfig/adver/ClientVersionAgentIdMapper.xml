@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.ClientVersionAgentIdMapper">
+    <resultMap id="BaseResultMap" type="ClientVersionAgentId">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="business_type" property="businessType" jdbcType="TINYINT"/>
+        <result column="business_id" property="businessId" jdbcType="INTEGER"/>
+        <result column="client_type" property="clientType" jdbcType="INTEGER"/>
+        <result column="client_version" property="clientVersion" jdbcType="VARCHAR"/>
+        <result column="agent_id" property="agentId" jdbcType="INTEGER"/>
+        <result column="is_and" property="isAnd" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, business_type, client_type, business_id, client_version, agent_id, is_and
+    </sql>
+
+    <sql id="tableName">client_version_agent_id cvai </sql>
+
+    <sql id="condition">
+        <if test="clientType!=null">
+            and client_type = #{clientType}
+        </if>
+        <if test="clientVersion!=null">
+            and client_version in(#{clientVersion}, 0)
+        </if>
+        <if test="agentId!=null">
+            and agent_id in (#{agentId}, 0)
+        </if>
+        <if test="businessType!=null">
+            and business_type = #{businessType}
+        </if>
+        <if test="businessId!=null">
+            and business_id = #{businessId}
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="ClientVersionAgentId" keyProperty="id">
+        insert into
+        client_version_agent_id
+        (business_type, business_id, client_type, client_version, agent_id,is_and) values
+        (#{businessType},#{businessId},#{clientType}, #{clientVersion},#{agentId}, #{isAnd})
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        where id =#{id}
+    </select>
+
+    <select id="selectListByConditionGroupByBusinessId" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        GROUP BY business_id
+    </select>
+
+    <select id="selectListByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <select id="selectListByClientTypeClientTypeAgentId" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <if test="clientType!=null">
+                and client_type = #{clientType}
+            </if>
+            <if test="clientVersion!=null">
+                and client_version in (#{clientVersion}, 0)
+            </if>
+            <if test="agentId!=null">
+                and agent_id in (#{agentId}, 0)
+            </if>
+            <if test="businessType!=null">
+                and business_type = #{businessType}
+            </if>
+            <if test="businessId!=null">
+                and business_id = #{businessId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPageByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByCondition" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+
+
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from
+        client_version_agent_id
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByBusinessId" parameterType="java.lang.Integer">
+        delete from
+        client_version_agent_id
+        where
+        <if test="businessId!=null">
+            business_id = #{businessId}
+        </if>
+        <if test="business_type!=null">
+            and business_type = #{businessType}
+        </if>
+    </delete>
+</mapper>

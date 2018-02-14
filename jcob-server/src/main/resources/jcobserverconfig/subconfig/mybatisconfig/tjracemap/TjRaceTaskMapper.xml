@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjRaceTaskMapper">
+	<resultMap id="BaseResultMap" type="TjRaceTask">
+		<id column="id" property="id"></id>
+		<result column="task_name" property="taskName" />
+		<result column="task_type" property="taskType" />
+		<result column="status" property="status" />
+		<result column="is_cancel" property="isCancel" />
+		<result column="race_id" property="raceId" />
+		<result column="excute_time" property="excuteTime" />
+		<result column="excute_millisecond" property="excuteMillisecond" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="features" property="features" />
+		<result column="features_version" property="featuresVersion" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, task_name,task_type,status,is_cancel,race_id ,excute_time, excute_millisecond ,create_time,
+		update_time,features,features_version
+	</sql>
+
+	<select id="queryRaceTaskById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race_task
+		where id = #{id}
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="TjRaceTask">
+		insert into
+		tj_race_task(task_name,task_type,race_id,excute_time,excute_millisecond,update_time)
+		values(#{taskName},
+		#{taskType},
+		#{raceId},
+		#{excuteTime},
+		#{excuteMillisecond},
+		now())
+	</insert>
+
+	<update id="updateStatus" parameterType="map">
+		update tj_race_task set status=#{newStatus},update_time=now() where id =
+		#{id} and status=#{oldStatus}
+	</update>
+
+	<update id="updateFeatures" parameterType="map">
+		update tj_race_task set features=#{features},features_version=features_version+1 where id =#{id} and features_version=#{oldFeaturesVersion}
+	</update>
+	
+	<delete id="cancelByRaceId" parameterType="map">
+		update tj_race_task set is_cancel=1,update_time=now() where race_id = #{raceId} and task_type=#{taskType}
+	</delete>
+	
+	<select id="queryAvailableTask" resultMap="BaseResultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race_task
+		where excute_time >#{curTime} and is_cancel=0 and status=0
+	</select>
+	
+	<select id="isRaceTaskExist" parameterType="map" resultType="int">
+		select count(1) from tj_race_task
+		where  race_id = #{raceId} and task_type=#{taskType} and is_cancel=0 and status=0
+	</select>
+</mapper>

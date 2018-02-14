@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.ClientModuleMapper">
+    <resultMap id="BaseResultMap" type="ClientModule">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="module_name" property="moduleName" jdbcType="VARCHAR"/>
+        <result column="module_style" property="moduleStyle" jdbcType="TINYINT"/>
+        <result column="module_pic_num" property="modulePicNum" jdbcType="TINYINT"/>
+        <result column="module_backup_loc_num" property="moduleBackupLocNum" jdbcType="TINYINT"/>
+        <result column="top_number" property="topNumber" jdbcType="TINYINT"/>
+        <result column="template_id" property="templateId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+        <result column="expand" property="expand" jdbcType="VARCHAR"/>
+        <result column="data_type" property="dataType" jdbcType="TINYINT"/>
+        <result column="save_amount" property="saveAmount" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, module_name, module_style, module_pic_num, module_backup_loc_num, top_number,
+      template_id, status, update_user, update_date, expand,data_type,save_amount
+    </sql>
+
+    <sql id="tableName">client_module cm</sql>
+
+    <sql id="condition">
+        <if test=" templateId !=null ">
+            template_id = #{templateId}
+        </if>
+        <if test=" status !=null">
+            and status = #{status}
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="ClientModule" keyProperty="id">
+        insert into
+        client_module
+        (module_name,module_style,module_pic_num,module_backup_loc_num,
+        top_number,template_id,status,update_user,update_date,expand,data_type,save_amount)
+        values (#{moduleName},#{moduleStyle},#{modulePicNum},#{moduleBackupLocNum},#{topNumber},
+        #{templateId},#{status},#{updateUser},#{updateDate},#{expand},#{dataType},#{saveAmount})
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        where id =#{id}
+    </select>
+
+    <select id="countModuleByTemplateId" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(1)
+        from
+        <include refid="tableName"/>
+        where template_id = #{templateId}
+    </select>
+
+    <select id="selectByUnionClientTemplate"  parameterType="java.util.HashMap" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from
+        client_module cm , client_template ct
+        <where>
+            <include refid="condition"/>
+        </where>
+        and cm.template_id = ct.id and ct.page_id = #{pageId} and ct.status = 1
+        order by top_number
+    </select>
+
+    <select id="selectByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        order by top_number
+    </select>
+
+    <select id="selectPageByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        order by top_number
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByCondition" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <update id="updateSort" parameterType="java.util.HashMap">
+        update <include refid="tableName"/>
+        SET
+        top_number=#{sort},
+        update_user=#{updateUser},
+        update_date=#{updateDate}
+        WHERE
+        id=#{id} and template_id =#{templateId}
+    </update>
+
+    <update id="updateStatus" parameterType="java.util.HashMap">
+        update <include refid="tableName"/>
+        SET
+        status = #{status},
+        update_user=#{updateUser},
+        update_date=#{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="update" parameterType="java.util.HashMap">
+        update <include refid="tableName"/>
+        set
+        save_amount = #{saveAmount},
+        update_user=#{updateUser},
+        update_date=#{updateDate}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from
+        client_module
+        where id =#{id}
+    </delete>
+</mapper>

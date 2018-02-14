@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       ">
+    <!--发布服务-->
+    <description>dubbo service provider-order</description>
+
+    <!--tjplan-->              
+    <dubbo:service interface="com.aicai.jcob.tjexpert.common.service.TjExpertApplyWriteService"
+                   id="tjExpertApplyWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjExpertApplyWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+                   
+    <dubbo:service interface="com.aicai.jcob.tjexpert.common.service.TjExpertInfoWriteService"
+                   id="tjExpertInfoWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjExpertInfoWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+                   
+    <dubbo:service interface="com.aicai.jcob.tjexpert.common.service.TjAttentionExpertWriteService"
+                   id="tjAttentionExpertWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjAttentionExpertWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+                   
+    <dubbo:service interface="com.aicai.jcob.tjexpert.common.service.TjExpertLevelLogWriteService"
+                   id="tjExpertLevelLogWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjExpertLevelLogWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+                   
+    <dubbo:service interface="com.aicai.jcob.tjplan.common.service.TjPlanWriteService"
+                   id="tjPlanWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjPlanWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+    <dubbo:service interface="com.aicai.jcob.tjplan.common.service.TjPlanItemWriteService"
+                   id="tjPlanItemWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjPlanItemWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+    <dubbo:service interface="com.aicai.jcob.tjrace.common.service.TjRaceWriteService"
+                   id="tjRaceWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjRaceWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+    <dubbo:service interface="com.aicai.jcob.tjrace.common.service.TjRaceTaskWriteService"
+                   id="tjRaceTaskWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjRaceTaskWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+    <dubbo:service interface="com.aicai.jcob.adver.common.service.ClientTemplateWriteService"
+                   id="clientTemplateWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientTemplateWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.adver.common.service.ClientModuleWriteService"
+                   id="clientModuleWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientModuleWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.adver.common.service.ClientModuleAdWriteService"
+                   id="clientModuleAdWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientModuleAdWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.adver.common.service.ClientVersionAgentIdWriteService"
+                   id="clientVersionAgentIdWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientVersionAgentIdWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.adver.common.service.ClientFunctionRecordWriteService"
+                   id="clientFunctionRecordWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientFunctionRecordWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.client.common.service.ClientUpgradeWriteService"
+                   id="clientUpgradeWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientUpgradeWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.client.common.service.ClientSecretWriteService"
+                   id="clientSecretWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientSecretWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+    
+    <dubbo:service interface="com.aicai.jcob.client.common.service.ClientChannelWriteService"
+                   id="clientChannelWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="clientChannelWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.audit.common.service.AuditSwitchWriteService"
+                   id="auditSwitchWriteDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="auditSwitchWriteServiceImpl"
+                   version="1.0.0"
+                   owner="jiajia.yang"/>
+
+    <dubbo:service interface="com.aicai.jcob.tjexpert.common.service.TjExpertSetInfoWriteService"
+                   id="tjExpertSetInfoWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="tjExpertSetInfoWriteServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+                   
+    <dubbo:service interface="com.aicai.jcob.game.common.service.CheckPlanEffectAdminService"
+                   id="checkPlanEffectAdminServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="checkPlanEffectAdminServiceImpl"
+                   version="1.0.0"
+                   owner="mingjing"/>
+    <dubbo:service interface="com.aicai.jcob.memberdrawmoney.common.service.MemberDrawMoneyWriteService"
+                   id="memberDrawMoneyWriteServiceDubboProvider"
+                   provider="jcobServiceProvider"
+                   ref="memberDrawMoneyWriteServiceImpl"
+                   version="1.0.0"
+                   owner="duannp"/>
+</beans>

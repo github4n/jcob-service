@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.ClientModuleAdMapper">
+    <resultMap id="BaseResultMap" type="ClientModuleAd">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="first_title" property="firstTitle" jdbcType="VARCHAR"/>
+        <result column="first_title_color" property="firstTitleColor" jdbcType="VARCHAR"/>
+        <result column="second_title" property="secondTitle" jdbcType="VARCHAR"/>
+        <result column="second_title_color" property="secondTitleColor" jdbcType="VARCHAR"/>
+        <result column="pic_url" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="module_id" property="moduleId" jdbcType="INTEGER"/>
+        <result column="module_position" property="modulePosition" jdbcType="TINYINT"/>
+        <result column="redirect_type" property="redirectType" jdbcType="TINYINT"/>
+        <result column="inner_page" property="inner" jdbcType="TINYINT"></result>
+        <result column="response_url" property="responseUrl" jdbcType="VARCHAR"/>
+        <result column="response_recommend" property="responseRecommend" jdbcType="VARCHAR"/>
+        <result column="response_experts" property="responseExperts" jdbcType="INTEGER"/>
+        <result column="response_match" property="responseMatch" jdbcType="INTEGER"/>
+        <result column="start_date" property="startDate" jdbcType="TIMESTAMP"/>
+        <result column="end_date" property="endDate" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+        <result column="expand" property="expand" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="tableName">client_module_ad cma</sql>
+
+    <sql id="Base_column_list">
+      id,first_title,first_title_color,second_title,second_title_color,pic_url,status,module_id,module_position,
+      redirect_type,inner_page,response_url,response_recommend,response_experts,response_match,start_date,end_date,update_user,
+      update_date,expand
+    </sql>
+
+    <sql id="condition">
+        <if test="moduleId!=null">
+            module_id = #{moduleId}
+        </if>
+        <if test="status!=null">
+            and status = #{status}
+        </if>
+        <if test="nowTime!=null">
+            <![CDATA[
+              and start_date <= #{nowTime}
+              and end_date >=#{nowTime}
+            ]]>
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="ClientModuleAd" keyProperty="id">
+        insert into
+        client_module_ad
+        (first_title,first_title_color,second_title,second_title_color,pic_url,status,module_id,
+        module_position,redirect_type,inner_page,response_url,response_recommend,response_experts,response_match,
+        start_date,end_date,update_user,update_date,expand) VALUES (#{firstTitle},#{firstTitleColor},#{secondTitle},
+        #{secondTitleColor},#{picUrl},#{status},#{moduleId},#{modulePosition},#{redirectType},#{inner},#{responseUrl},
+        #{responseRecommend},#{responseExperts},#{responseMatch},#{startDate},#{endDate},#{updateUser},#{updateDate},#{expand})
+    </insert>
+
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_column_list"/>
+        from
+        <include refid="tableName"/>
+        where id =#{id}
+    </select>
+
+    <select id="selectListByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_column_list"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        order by module_position
+    </select>
+
+    <select id="selectPageByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_column_list"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByCondition" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <select id="selectByModuleIdAndModulePosition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_column_list"/>
+        from
+        <include refid="tableName"/>
+        where
+        module_id = #{moduleId} and module_position = #{position}
+    </select>
+
+
+    <select id="isExsitAvailableModuleAd" resultType="int" parameterType="java.util.HashMap">
+        select
+        count(1)
+        from
+        client_module cm , client_module_ad cma
+        <where>
+          cm.id = cma.module_id
+          and cm.template_id = #{templateId}
+          and cm.status = 1
+          and cma.status = 1
+          <![CDATA[
+          and cma.start_date <= #{nowTime}
+          and cma.end_date >= #{nowTime}
+          ]]>
+        </where>
+    </select>
+
+    <update id="updateModuleAdStatus" parameterType="java.util.HashMap">
+        update client_module_ad
+        set
+        status = #{status},
+        update_user = #{updateUser},
+        update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="update" parameterType="java.util.HashMap">
+        update client_module_ad
+        set
+        <if test="status !=null">
+          status = #{status},
+        </if>
+        <if test="firstTitle !=null">
+          first_title = #{firstTitle},
+        </if>
+        <if test="firstTitleColor !=null">
+            first_title_color =#{firstTitleColor},
+        </if>
+        <if test="secondTitle!=null">
+            second_title = #{secondTitle},
+        </if>
+        <if test="secondTitleColor!=null">
+            second_title_color = #{secondTitleColor},
+        </if>
+        <if test="picUrl!=null">
+            pic_url = #{picUrl},
+        </if>
+        <if test="redirectType!=null">
+            redirect_type = #{redirectType},
+        </if>
+        <if test="inner!=null">
+            inner_page = #{inner},
+        </if>
+        <if test="responseUrl!=null">
+            response_url = #{responseUrl},
+        </if>
+        <if test="responseRecommend!=null">
+            response_recommend = #{responseRecommend},
+        </if>
+        <if test="responseExperts!=null">
+            response_experts = #{responseExperts},
+        </if>
+        <if test="responseMatch!=null">
+            response_match = #{responseMatch},
+        </if>
+        <if test="startDate!=null">
+            start_date =#{startDate},
+        </if>
+        <if test="endDate!=null">
+            end_date = #{endDate},
+        </if>
+        <if test="updateUser!=null">
+            update_user = #{updateUser},
+        </if>
+        <if test="updateDate!=null">
+            update_date= #{updateDate},
+        </if>
+        <if test="modulePosition!=null">
+            module_position = #{modulePosition}
+        </if>
+        where id =#{id}
+    </update>
+
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from
+        client_module_ad
+        where id = #{id}
+    </delete>
+</mapper>

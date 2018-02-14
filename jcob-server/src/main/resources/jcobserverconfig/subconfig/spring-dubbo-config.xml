@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+       http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+       ">
+    <description>dubbo server端配置</description>
+
+    
+    <!-- Application name -->
+    <dubbo:application id="jcobService"
+                       name="${jcobService.dubbo.application.name}"
+                       owner="${jcobService.dubbo.application.owner}"
+                       organization="${jcobService.dubbo.application.organization}"
+                       logger="slf4j"
+                       compiler="javassist"/>
+
+    <!--监控中心
+    <dubbo:monitor protocol="registry" address="${coreservice.dubbo.registry.address}"/>
+-->
+    <!--协议-->
+    <dubbo:protocol id="jcobServiceProtocol"
+                    name="${jcobService.dubbo.protocol.name}"
+                    port="-1"
+                    dispatcher="${jcobService.dubbo.protocol.dispatcher}"
+                    threadpool="${jcobService.dubbo.protocol.threadpool}"
+                    threads="${jcobService.dubbo.protocol.threads}">
+    </dubbo:protocol>
+
+    <!--注册中心, 在本地开发环境请采用直连方式，可把 register, subscribe 都配置为false-->
+    <dubbo:registry id="jcobServiceRegistry"
+                    protocol="${jcobService.dubbo.registry.name}"
+                    address="${jcobService.dubbo.registry.address}"
+                    client="${jcobService.dubbo.registry.client}"
+                    group="dubboservice/jcobService/${jcobService.dubbo.registry.group}"
+                    session="60000"
+                    register="true"
+                    subscribe="false"
+                    check="true" file="jcobService-registry-cache.properties">
+    </dubbo:registry>
+
+    <!--服务-->
+    <dubbo:provider id="jcobServiceProvider"
+                    application="jcobService"
+                    registry="jcobServiceRegistry"
+                    protocol="jcobServiceProtocol"
+                    cluster="${jcobService.dubbo.provider.cluster}"
+                    loadbalance="${jcobService.dubbo.provider.loadbalance}"
+                    serialization="${jcobService.dubbo.provider.serialization}"
+                    retries="${jcobService.dubbo.provider.retries}"
+                    timeout="${jcobService.dubbo.provider.timeout}"
+                    proxy="javassist"
+                    delay="-1"
+                    >
+    </dubbo:provider>
+</beans>

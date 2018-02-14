@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<bean name="mybatisSqlSessionFactoryTjplan" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceTjplan" />
+		<property name="configLocation"
+			value="classpath:/jcobserverconfig/subconfig/mybatisconfig/mybatis-jcob-tjplan.xml" />
+	</bean>
+
+
+	
+	
+	<bean name="myBatisTemplateTjplan" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="mybatisSqlSessionFactoryTjplan" />
+	</bean>
+
+	
+	<bean name="mybatisTemplateTjplanBatch" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="mybatisSqlSessionFactoryTjplan" />
+		<constructor-arg value="BATCH" />
+	</bean>
+	
+	
+	
+	<bean name="transactionManagerTjplan"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceTjplan" />
+	</bean>
+
+	<bean name="transactionTemplateTjplan"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="transactionManagerTjplan" />
+	</bean>
+	
+	<!-- 事务传播级别 RequestNew 的transactionTemplateTjplan-->
+	<bean name="transactionTemplateTjplanRequestNew"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="transactionManagerTjplan" />
+		<property name="propagationBehavior" value="3" />
+	</bean>
+	
+</beans>

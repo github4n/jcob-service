@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberUseChargeWayMapper" >
+  <resultMap id="BaseResultMap" type="MemberUseChargeWay" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="charge_index" property="chargeIndex" jdbcType="TINYINT" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+    <result column="bank_card" property="bankCard" jdbcType="VARCHAR" />
+    <result column="client_type" property="clientType" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="pay_type" property = "payType" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, member_id, charge_index, bank_name, bank_code, bank_card, client_type, status, pay_type,
+    create_time, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_use_charge_way
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="queryMemberUseChargeWayWithOption" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    
+    <include refid="Base_Column_List" />
+    
+    from member_use_charge_way
+    
+    where member_id = #{memberId,jdbcType=BIGINT}
+    
+    and charge_index = #{chargeIndex,jdbcType=TINYINT}
+    
+    <if test="bankCode != null" >
+    	and bank_code = #{bankCode,jdbcType=VARCHAR}
+    </if>
+    
+    <if test="bankCard != null">
+    	and bank_card = #{bankCard,jdbcType=VARCHAR}
+    </if>
+    
+    and status = 1
+  </select>
+  
+  <select id="queryMemberUseChargeWayTop5" resultMap="BaseResultMap" parameterType="map">
+  	select  
+  	<include refid="Base_Column_List" />
+	from member_use_charge_way
+	where member_id = #{memberId}
+	and status = 1
+	order by update_time desc
+	limit 0,5
+  </select>
+  
+  <insert id="insertSelective" parameterType="MemberUseChargeWay" >
+    <selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+    
+    insert into member_use_charge_way
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="chargeIndex != null" >
+        charge_index,
+      </if>
+      <if test="bankName != null" >
+        bank_name,
+      </if>
+      <if test="bankCode != null" >
+        bank_code,
+      </if>
+      <if test="bankCard != null" >
+        bank_card,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="payType != null">
+      	pay_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="chargeIndex != null" >
+        #{chargeIndex,jdbcType=TINYINT},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCode != null" >
+        #{bankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null" >
+        #{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null" >
+        #{clientType,jdbcType=BIT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payType != null">
+      	#{payType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateMemberUseChargeWayUpdateTime" parameterType="map" >
+  	update member_use_charge_way 
+  	set update_time = #{updateTime,jdbcType=TIMESTAMP}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberUseChargeWayStatusFailById" parameterType="map" >
+  	update member_use_charge_way
+  	set status = 0
+  	where id = #{id,jdbcType=BIGINT}
+  	and member_id = #{memberId,jdbcType=BIGINT}
+  </update>
+  
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjPlanItemMapper" >
+  <resultMap id="BaseResultMap" type="TjPlanItem" >
+    <id column="id" property="id" />
+    <result column="plan_id" property="planId"  />
+    <result column="game_id" property="gameId"  />
+    <result column="race_type" property="raceType"  />
+    <result column="content" property="content"  />
+    <result column="win_status" property="winStatus"  />
+     <result column="features" property="features" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="race_id" property="raceId"  />
+  </resultMap>
+ 
+  <sql id="Base_Column_List" >
+    id, plan_id, game_id, race_type, content, win_status,features, create_time, update_time,race_id
+  </sql>
+  <select id="queryTjPlanItemByPlanId" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_plan_item where plan_id = #{planId}
+  </select>
+  
+  <select id="queryTjPlanItemByRaceId" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_plan_item where race_id = #{raceId}
+  </select>
+  <insert id="saveTjPlanItem" parameterType="TjPlanItem" useGeneratedKeys="true" keyProperty="id" >
+    insert into tj_plan_item
+	     (
+	      plan_id,
+	      game_id,
+	      race_type,
+	      content,
+	      win_status,
+	      features,
+	      create_time,
+	      update_time,
+	      race_id)
+	   values
+	     (
+	      #{planId},
+	      #{gameId},
+	      #{raceType},
+	      #{content},
+	      #{winStatus},
+	      #{features},
+	      #{createTime},
+	      #{updateTime},
+	      #{raceId})
+  </insert>
+
+  <update id="updateTjPlanItemWinStatus" parameterType="map" >
+    update tj_plan_item
+    set 
+      win_status = #{newWinStatus},
+       <if test="features != null">
+       features = #{features},
+       </if>
+      update_time = #{updateTime}
+    where id = #{id}
+  </update>
+  
+  <select id="queryPlanIdsByRaceId" parameterType="map" resultType="long">
+      select distinct plan_id from tj_plan_item where race_id=#{raceId}
+      order by id
+	  limit #{startIndex},#{pageSize}
+  </select>
+	
+  <select id="queryPlanIdsCount" parameterType="map" resultType="int">
+		SELECT COUNT(DISTINCT plan_id) from tj_plan_item where race_id=#{raceId}
+  </select>
+  <select id="queryPlanItemByMemberIdAndRaceId" parameterType="map"  resultMap="BaseResultMap">
+		select 
+			item.* 
+		from 
+			tj_plan plan ,tj_plan_item item 
+		where 
+		plan.id = item.plan_id 
+		and plan.member_id = #{memberId} 
+		and item.race_id =#{raceId} 
+		and item.game_id = #{gameId}
+		 <![CDATA[
+		and plan.create_time >= #{startDate}
+		]]>
+		limit 0,1
+  </select>
+  
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberWalletMapper" >
+  <resultMap id="BaseResultMap" type="MemberWallet" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="able_balance" property="ableBalance"  />
+    <result column="freezed_balance" property="freezedBalance"  />
+    <result column="heap_balance" property="heapBalance"  />
+    <result column="verify_md5" property="verifyMd5"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+  </resultMap>
+ 
+  <sql id="BASE_COLUMN_LIST" >
+    id, member_id, able_balance, freezed_balance, heap_balance, verify_md5, create_time, 
+    update_time
+  </sql>
+  <select id="queryMemberWalletById" resultMap="BaseResultMap" parameterType="map" >
+    SELECT
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_wallet 
+    WHERE id = #{id}
+  </select>
+  
+  <select id="queryMemberWalletByMemberId" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_wallet
+    WHERE member_id = #{memberId}
+  </select>
+ 
+   <select id="lockMemberWallet" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="BASE_COLUMN_LIST" />
+    FROM member_wallet
+    WHERE member_id = #{memberId} for update
+  </select>
+  <insert id="saveMemberWallet" parameterType="MemberWallet" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO member_wallet
+     (member_id,
+      able_balance,
+      freezed_balance,
+      heap_balance,
+      verify_md5,
+      create_time,
+      update_time)
+   VALUES
+     (#{memberId},
+      #{ableBalance},
+      #{freezedBalance},
+      #{heapBalance},
+      #{calculateVerifyMd5},
+      #{createTime},
+      #{updateTime})
+  </insert>
+  <update id="updateMemberWallet" parameterType="MemberWallet" >
+    UPDATE member_wallet
+    <set >
+      <if test="ableBalance != null" >
+        able_balance = #{ableBalance},
+      </if>
+      <if test="freezedBalance != null" >
+        freezed_balance = #{freezedBalance},
+      </if>
+      <if test="heapBalance != null" >
+        heap_balance = #{heapBalance},
+      </if>
+      <if test="calculateVerifyMd5 != null" >
+        verify_md5 = #{calculateVerifyMd5},
+      </if>
+     
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+  
+   <resultMap id="pageWalletResult" type="com.aicai.jcob.memberwallet.common.domain.result.PageWalletVo" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="nick_name" property="nickName"  />
+    <result column="level" property="expertLevel"  />
+    <result column="able_balance" property="ableBalance"  />
+  </resultMap>
+  
+   <select id="pageMemberWallet" resultMap="pageWalletResult" parameterType="map" >
+    SELECT 
+   	 wallet.member_id member_id,
+   	 m.nick_name nick_name,
+   	 expert.level level,
+   	 wallet.able_balance able_balance
+     FROM member_wallet wallet left join member m on wallet.member_id = m.id
+     left join tj_expert_info expert on wallet.member_id = expert.member_id
+    <include refid="pageMemberWalletWhere" />
+    order by wallet.create_time desc
+    limit #{startIndex},#{pageSize}
+  </select>
+  
+   <select id="countMemberWallet" resultType="java.lang.Integer" parameterType="map" >
+    SELECT 
+   		count(1)
+     FROM member_wallet wallet left join member m on wallet.member_id = m.id
+     left join tj_expert_info expert on wallet.member_id = expert.member_id
+     <include refid="pageMemberWalletWhere" />
+  </select>
+  
+   <sql id="pageMemberWalletWhere">
+    <where>
+    <if test="option.memberId != null">
+    	and wallet.member_id = #{option.memberId}
+    </if>
+    <if test="option.expertLevel != null">
+     	and expert.level = #{option.expertLevel}
+    </if>
+    <if test="option.leftAndEqualAmount != null">
+    	<![CDATA[and wallet.able_balance >= #{option.leftAndEqualAmount}]]>
+    </if>
+    <if test="option.rightAndEqualAmount != null">
+      <![CDATA[	and wallet.able_balance <= #{option.rightAndEqualAmount}]]>
+    </if>
+    <if test="option.phone != null and option.phone != ''">
+     	and m.phone = #{option.phone}
+    </if>
+    <if test="option.nickName != null and option.nickName != ''">
+     	and m.nick_name = #{option.nickName}
+    </if>
+    </where>
+   </sql>
+   
+   <select id="sumMemberWallet" resultType="java.math.BigDecimal" parameterType="map" >
+    SELECT 
+   		sum(wallet.able_balance)
+   	 FROM member_wallet wallet left join member m on wallet.member_id = m.id
+     left join tj_expert_info expert on wallet.member_id = expert.member_id
+    <include refid="pageMemberWalletWhere" />
+  </select>
+</mapper>

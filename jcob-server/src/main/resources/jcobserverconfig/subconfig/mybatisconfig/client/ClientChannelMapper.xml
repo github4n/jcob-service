@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ClientChannelMapper">
+	<resultMap id="BaseResultMap" type="ClientChannel">
+		<id column="id" property="id" />
+		<result column="parent_no" property="parentNo" />
+		<result column="parent_name" property="parentName" />
+		<result column="channel_no" property="channelNo" />
+		<result column="channel_name" property="channelName" />
+		<result column="client_type" property="clientType" />
+		<result column="media" property="media" />
+		<result column="url" property="url" />
+		<result column="remarks" property="remarks" />
+		<result column="is_del" property="isDel" />
+		<result column="update_time" property="updateTime" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+	<sql id="allColumn">
+		id,parent_no,parent_name,channel_no,channel_name,client_type,media,url,remarks,update_time,create_time
+	</sql>
+
+	<insert id="insert" parameterType="ClientChannel" keyProperty="id"
+		useGeneratedKeys="true">
+		insert into client_channel
+		(parent_no,parent_name,channel_no,channel_name,client_type,media,url,remarks,update_time)
+		values
+		(#{parentNo},#{parentName},#{channelNo},#{channelName},#{clientType},#{media},#{url},#{remarks},now())
+	</insert>
+
+	<update id="deleteById" parameterType="int">
+		update client_channel set
+		is_del = 1,update_time=now() where id=#{id}
+	</update>
+
+	<update id="updateClientChannel" parameterType="ClientChannel">
+		update
+		client_channel
+		<set>
+			<if test="parentNo != null">
+				parent_no = #{parentNo},
+			</if>
+			<if test="parentName != null">
+				parent_name = #{parentName},
+			</if>
+			<if test="channelName != null">
+				channel_name = #{channelName},
+			</if>
+			<if test="clientType != null">
+				client_type = #{clientType},
+			</if>
+			<if test="media != null">
+				media = #{media},
+			</if>
+			<if test="url != null">
+				url = #{url},
+			</if>
+			<if test="remarks != null">
+				remarks = #{remarks},
+			</if>
+			update_time=now()
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="queryByChannelNo" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="allColumn" />
+		from
+		client_channel
+		where channel_no = #{channelNo}
+	</select>
+
+	<select id="queryById" resultMap="BaseResultMap" parameterType="map">
+		select
+		<include refid="allColumn" />
+		from
+		client_channel
+		where id = #{id}
+	</select>
+
+	<select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="allColumn" />
+		from
+		client_channel
+		<include refid="queryByPageWhere" />
+		order by id desc limit #{startIndex},#{pageSize}
+	</select>
+
+	<select id="queryByPageCount" parameterType="map" resultType="int">
+		select
+		count(1)
+		from
+		client_channel
+		<include refid="queryByPageWhere" />
+	</select>
+
+	<sql id="queryByPageWhere">
+		<where>
+		    	is_del=0
+			<if test="condition.parentNo != null and condition.parentNo != 0">
+				and parent_no = #{condition.parentNo}
+			</if>
+			<if test="condition.parentName != null and condition.parentName != ''">
+				and parent_name = #{condition.parentName}
+			</if>
+			<if test="condition.channelNo != null and condition.channelNo != 0 ">
+				and channel_no = #{condition.channelNo}
+			</if>
+			<if test="condition.channelName != null and condition.channelName != ''">
+				and channel_name like
+				CONCAT('%',#{condition.channelName},'%' )
+			</if>
+			<if test="condition.clientType != null">
+				and client_type = #{condition.clientType}
+			</if>
+			<if test="condition.media != null and condition.media != ''">
+				and media like CONCAT('%',#{condition.media},'%' )
+			</if>
+			<if test="condition.url != null and condition.url != ''">
+				and url like CONCAT('%',#{condition.url},'%' )
+			</if>
+			<if test="condition.remarks != null and condition.remarks != ''">
+				and remarks like CONCAT('%',#{condition.remarks},'%' )
+			</if>
+		</where>
+	</sql>
+
+	<select id="queryMaxChannelNo" parameterType="map" resultType="int">
+		select max(channel_no) from client_channel
+	</select>
+
+	<select id="isChannelExist" parameterType="map" resultType="int">
+		select count(*) from client_channel where channel_no=#{channelNo}
+	</select>
+	
+	<update id="updateChannelNameByParentNo" parameterType="map">
+		update client_channel set parent_name=#{parentName} where parent_no=#{parentNo}
+	</update>
+</mapper>

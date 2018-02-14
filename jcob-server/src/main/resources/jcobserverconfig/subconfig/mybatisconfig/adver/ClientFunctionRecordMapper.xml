@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.ClientFunctionRecordMapper" >
+    <resultMap id="BaseResultMap" type="ClientFunctionRecord" >
+        <id column="id" property="id"  />
+        <result column="client_type" property="clientType"/>
+        <result column="ad_location" property="adLocation"/>
+        <result column="top_number" property="topNumber"  />
+        <result column="record_state" property="recordState"  />
+        <result column="start_date" property="startDate"  />
+        <result column="end_date" property="endDate"  />
+        <result column="create_date" property="createDate"  />
+        <result column="request_top" property="requestTop"  />
+        <result column="filter_param" property="filterParam"  />
+        <result column="tips_status_type"  property="tipsStatusType"/>
+        <result column="title" property="title" />
+        <result column="pic_url" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="redirect_type" property="redirectType" jdbcType="TINYINT"/>
+        <result column="inner_page" property="inner" jdbcType="TINYINT"></result>
+        <result column="response_url" property="responseUrl" jdbcType="VARCHAR"/>
+        <result column="response_recommend" property="responseRecommend" jdbcType="VARCHAR"/>
+        <result column="response_experts" property="responseExperts" jdbcType="INTEGER"/>
+        <result column="response_match" property="responseMatch" jdbcType="INTEGER"/>
+        <result column="expand" property="expand"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        select id,client_type,ad_location,top_number,record_state,start_date, end_date,create_date,request_top,tips_status_type,
+        title,pic_url,redirect_type,inner_page,response_url,response_recommend,response_experts,response_match,expand
+    </sql>
+
+    <!-- 查询条件组装 -->
+    <sql id="query_where_condition_admin">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="clientType != null">
+                and client_type = #{clientType}
+            </if>
+            <if test="adLocation != null">
+                and ad_location = #{adLocation}
+            </if>
+            <if test="recordState != null">
+                and record_state = #{recordState}
+            </if>
+            <if test="startDate != null">
+                and <![CDATA[ start_date >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null">
+                and <![CDATA[ end_date <= #{endDate} ]]>
+            </if>
+            <if test="topNumber !=null">
+                and top_number = #{topNumber}
+            </if>
+            <if test="ids!=null">
+                and id in
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <!--后台分页查询-->
+    <select id="query_client_function_list" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        <include refid="Base_Column_List" />
+        from client_function_record
+        <include refid="query_where_condition_admin"/>
+        order by
+        <if test="requestTop != null and requestTop!=''">${requestTop} desc,</if>
+        top_number asc, id desc
+
+        <if test="startIndex != null and pageSize != null">
+            limit #{startIndex}, #{pageSize}
+        </if>
+    </select>
+
+    <!--分页统计-->
+    <select id="query_client_record_count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(id) from client_function_record  <include refid="query_where_condition_admin"/>
+    </select>
+
+    <select id="query_cfrecord_by_id" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="Base_Column_List" />
+        from client_function_record
+        <include refid="query_where_condition_admin"/>
+    </select>
+
+    <!--前端查询广告图-->
+    <select id="queryListClient" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        <include refid="Base_Column_List" />
+        from client_function_record
+        <where>
+            <if test="clientType!=null">
+                client_type =#{clientType}
+            </if>
+            <if test="adLocation!=null">
+                and ad_location = #{adLocation}
+            </if>
+            and record_state = 1
+            <if test="nowTime != null">
+            <![CDATA[
+              and start_date <= #{nowTime}
+              and end_date >=#{nowTime}
+            ]]>
+            </if>
+            order by
+            <if test="requestTop != null and requestTop!=''">#{requestTop} desc,</if>
+            top_number asc, id desc
+        </where>
+    </select>
+
+
+    <insert id="insert_client_record" parameterType="ClientFunctionRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into client_function_record(client_type,ad_location,top_number,record_state,start_date, end_date,create_date,request_top,
+        tips_status_type,title,pic_url,redirect_type,inner_page,response_url,response_recommend,response_experts,response_match,
+        expand)
+        values(#{clientType},#{adLocation},#{topNumber},#{recordState},#{startDate},#{endDate},#{createDate},#{requestTop},#{tipsStatusType},
+        #{title},#{picUrl},#{redirectType},#{inner},#{responseUrl},#{responseRecommend},#{responseExperts},#{responseMatch},#{expand})
+    </insert>
+
+    <delete id="delete_client_record" parameterType="java.util.Map">
+        delete from client_function_record
+        <where>
+            <if test="listArray !=null and listArray !='' and listArray.size() > 0 ">
+                id in
+                <foreach item="item" index="index" collection="listArray" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <delete id="delete_client_record_id" parameterType="java.util.HashMap" >
+        delete from client_function_record where id =#{id}
+    </delete>
+
+    <update id="update_cfrecord_by_id" parameterType="ClientFunctionRecord">
+        update client_function_record
+        <set>
+            <if test="picUrl!=null">
+                pic_url = #{picUrl},
+            </if>
+            <if test="clientType != null">
+                client_type=#{clientType},
+            </if>
+            <if test="adLocation != null">
+                ad_location=#{adLocation},
+            </if>
+            <if test="topNumber != null">
+                top_number=#{topNumber},
+            </if>
+            <if test="recordState != null">
+                record_state=#{recordState},
+            </if>
+            <if test="startDate != null">
+                start_date =#{startDate},
+            </if>
+            <if test="endDate != null">
+                end_date =#{endDate},
+            </if>
+            <if test="createDate != null">
+                create_date=#{createDate},
+            </if>
+            <if test="requestTop != null">
+                request_top=#{requestTop},
+            </if>
+            <if test="tipsStatusType!=null">
+                tips_status_type = #{tipsStatusType},
+            </if>
+            <if test="title != null">
+                title=#{title},
+            </if>
+            <if test="redirectType!=null">
+                redirect_type=#{redirectType},
+            </if>
+            <if test="inner!=null">
+                inner_page=#{inner},
+            </if>
+            <if test="responseUrl!=null">
+                response_url=#{responseUrl},
+            </if>
+            <if test="responseRecommend!=null">
+                response_recommend = #{responseRecommend},
+            </if>
+            <if test="responseExperts!=null">
+                response_experts=#{responseExperts},
+            </if>
+            <if test="responseMatch!=null">
+                response_match=#{responseMatch},
+            </if>
+            <if test="expand != null">
+                expand=#{expand},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

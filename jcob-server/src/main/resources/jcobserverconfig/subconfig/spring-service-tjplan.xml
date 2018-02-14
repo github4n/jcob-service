@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<tx:annotation-driven />
+	
+	<bean name="tjExpertInfoWriteServiceImpl" class="com.aicai.jcob.tjexpert.service.TjExpertInfoWriteServiceImpl" />
+	<bean name="tjExpertApplyWriteServiceImpl" class="com.aicai.jcob.tjexpert.service.TjExpertApplyWriteServiceImpl" />
+	<bean name="tjExpertSetInfoWriteServiceImpl" class="com.aicai.jcob.tjexpert.service.TjExpertSetInfoWriteServiceImpl" />
+	<bean name="tjPlanWriteServiceImpl" class="com.aicai.jcob.tjplan.service.impl.TjPlanWriteServiceImpl" />
+	<bean name="tjPlanItemWriteServiceImpl" class="com.aicai.jcob.tjplan.service.impl.TjPlanItemWriteServiceImpl" />
+	<bean name="tjExpertLevelLogWriteServiceImpl" class="com.aicai.jcob.tjexpert.service.TjExpertLevelLogWriteServiceImpl" />
+	<bean name="tjRaceWriteServiceImpl" class="com.aicai.jcob.tjrace.service.impl.TjRaceWriteServiceImpl" />
+	<bean name="tjRaceTaskWriteServiceImpl" class="com.aicai.jcob.tjrace.service.impl.TjRaceTaskWriteServiceImpl" />
+    <bean name="tjAttentionExpertWriteServiceImpl" class="com.aicai.jcob.tjexpert.service.TjAttentionExpertWriteServiceImpl" />
+
+	<bean name="clientModuleAdWriteServiceImpl" class="com.aicai.jcob.adver.service.impl.ClientModuleAdWriteServiceImpl"/>
+	<bean name="clientModuleWriteServiceImpl" class="com.aicai.jcob.adver.service.impl.ClientModuleWriteServiceImpl"/>
+	<bean name="clientTemplateWriteServiceImpl" class="com.aicai.jcob.adver.service.impl.ClientTemplateWriteServiceImpl"/>
+	<bean name="clientVersionAgentIdWriteServiceImpl" class="com.aicai.jcob.adver.service.impl.ClientVersionAgentIdWriteServiceImpl"/>
+	<bean name="clientFunctionRecordWriteServiceImpl" class="com.aicai.jcob.adver.service.impl.ClientFunctionRecordWriteServiceImpl"/>
+	<bean name="clientUpgradeWriteServiceImpl" class="com.aicai.jcob.client.service.impl.ClientUpgradeWriteServiceImpl"/>
+	<bean name="clientSecretWriteServiceImpl" class="com.aicai.jcob.client.service.impl.ClientSecretWriteServiceImpl"/>
+	<bean name="clientChannelWriteServiceImpl" class="com.aicai.jcob.client.service.impl.ClientChannelWriteServiceImpl"/>
+	<bean name="auditSwitchWriteServiceImpl" class="com.aicai.jcob.audit.service.impl.AuditSwitchWriteServiceImpl"/>
+</beans>

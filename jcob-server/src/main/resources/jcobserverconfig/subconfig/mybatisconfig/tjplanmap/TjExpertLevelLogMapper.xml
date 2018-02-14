@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjExpertLevelLogMapper" >
+  <resultMap id="tjExpertLevelLogResult" type="TjExpertLevelLog" >
+    <id column="id" property="id"  />
+    <result column="member_id" property="memberId"  />
+    <result column="handle_type" property="handleType"  />
+    <result column="new_level" property="newLevel"  />
+    <result column="old_level" property="oldLevel"  />
+    <result column="create_time" property="createTime"  />
+  </resultMap>
+
+ <sql id="Base_Column_List" >
+    id, member_id, handle_type, new_level, old_level, create_time
+  </sql>
+  
+  <select id="queryLevelLogBymemberId" resultMap="tjExpertLevelLogResult" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tj_expert_level_log
+    where member_id = #{memberId}
+    order by create_time DESC
+  </select>
+  
+  <!--查询降为升为正式专家的的log --> 
+  <select id="queryFormalExpertLog" resultMap="tjExpertLevelLogResult" parameterType="java.lang.Long">
+   SELECT <include refid="Base_Column_List" />
+    FROM tj_expert_level_log 
+    WHERE handle_type=1 AND new_level=2 AND old_level=1 AND member_id=#{memberId}
+    	ORDER BY create_time ASC
+  </select>
+  
+  <!--  查询降为升为测试专家的的log  -->
+  <select id="queryTestExpertLog" resultMap="tjExpertLevelLogResult" parameterType="java.lang.Long">
+ 	SELECT <include refid="Base_Column_List" />
+ 	FROM tj_expert_level_log 
+ 	WHERE handle_type=1  AND new_level=1 AND old_level=0 AND member_id=#{memberId}
+   		ORDER BY create_time ASC
+  </select>
+  
+  <!-- 查询降为普通用户的log -->
+  <select id="queryDropInNomalLog" resultMap="tjExpertLevelLogResult" parameterType="java.lang.Long">
+   SELECT <include refid="Base_Column_List" />
+   FROM tj_expert_level_log
+   WHERE handle_type=2 AND new_level=0 AND member_id=#{memberId}
+   		ORDER BY create_time ASC
+  </select>
+  
+  <insert id="insertExpertLevelLog" parameterType="TjExpertLevelLog" >
+    insert into tj_expert_level_log ( member_id, handle_type, 
+      new_level, old_level, create_time
+      )
+    values ( #{memberId}, #{handleType}, 
+      #{newLevel}, #{oldLevel}, #{createTime}
+      )
+  </insert>
+  
+</mapper>

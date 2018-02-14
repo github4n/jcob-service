@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="memberFeedbackMapper">
+	<resultMap id="BaseResultMap" type="MemberFeedback">
+		<id column="id" property="id"></id>
+		<result column="member_id" property="memberId" />
+		<result column="client_type" property="clientType" />
+		<result column="content" property="content" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, member_id,client_type, content, create_time
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="MemberFeedback">
+		insert into
+		member_feedback(member_id,client_type,content) values
+		(#{memberId},#{clientType}, #{content})
+	</insert>
+
+	<select id="queryByPageCount" parameterType="map" resultType="int">
+		select count(1) from member_feedback mf left join member m on
+		mf.member_id=m.id
+		left join tj_expert_info e on mf.member_id=e.member_id
+		<include refid="queryCondition" />
+	</select>
+
+	<resultMap id="memberFeedbackResultMap" type="com.aicai.jcob.member.common.result.MemberFeedbackResult">
+    	<id column="id" property="id" />
+    	<result column="nick_name" property="nickName"/>
+    	<result column="level" property="level"/>
+		<result column="member_id" property="memberId" />
+		<result column="client_type" property="clientType" />
+		<result column="content" property="content" />
+		<result column="create_time" property="createTime" />
+  	</resultMap>
+  
+	<select id="queryByPage" parameterType="map" resultMap="memberFeedbackResultMap">
+		select
+		mf.id id,
+		mf.member_id member_id,
+		mf.client_type client_type,
+		mf.content content,
+		mf.create_time create_time,
+		m.nick_name nick_name,
+		e.level level
+		from member_feedback mf left join member m on mf.member_id=m.id
+		left join tj_expert_info e on mf.member_id=e.member_id
+		<include refid="queryCondition" />
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<sql id="queryCondition">
+		<where>
+			<if test="condition != null">
+				<if test="condition.memberId != null">
+					and mf.member_id = #{condition.memberId}
+				</if>
+				<if test="condition.clientType != null and condition.clientType != -1">
+					and mf.client_type = #{condition.clientType}
+				</if>
+				<if test="condition.nickName != null">
+					and m.nick_name like CONCAT('%',#{condition.nickName},'%' )
+				</if>
+				<if test="condition.phone != null">
+					and m.phone like CONCAT('%',#{condition.phone},'%' )
+				</if>
+				<if test="condition.level != null and condition.level != -1">
+					and e.level = #{condition.level}
+				</if>
+				<if test="condition.startDate != null">
+					and mf.create_time>=#{condition.startDate}
+				</if>
+				<if test="condition.endDate != null">
+				<![CDATA[and mf.create_time<=#{condition.endDate}]]>
+				</if>
+			</if>
+		</where>
+	</sql>
+
+
+</mapper>

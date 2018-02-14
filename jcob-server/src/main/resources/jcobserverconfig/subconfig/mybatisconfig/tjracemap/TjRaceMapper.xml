@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjRaceMapper">
+	<resultMap id="BaseResultMap" type="TjRace">
+		<id column="id" property="id"></id>
+		<result column="race_type" property="raceType" />
+		<result column="league_type" property="leagueType" />
+		<result column="match_no" property="matchNo" />
+		<result column="unique_match_no" property="uniqueMatchNo" />
+		<result column="match_id" property="matchId" />
+		<result column="match_name" property="matchName" />
+		<result column="status" property="status" />
+		<result column="match_time" property="matchTime" />
+		<result column="home_team" property="homeTeam" />
+		<result column="guest_team" property="guestTeam" />
+		<result column="handicap" property="handicap" />
+		<result column="whole_score" property="wholeScore" />
+		<result column="sp" property="sp" />
+		<result column="fx_id" property="fxId" />
+		<result column="bf_id" property="bfId" />
+		<result column="publish_time" property="publishTime" />
+		<result column="match_short_name" property="matchShortName" />
+		<result column="home_team_short_name" property="homeTeamShortName" />
+		<result column="guest_team_short_name" property="guestTeamShortName" />
+		<result column="home_img_path" property="homeImgPath" />
+		<result column="guest_img_path" property="guestImgPath" />
+		<result column="week_of_year" property="weekOfYear" />
+		<result column="section_score" property="sectionScore" />
+		<result column="is_del" property="isDel" />
+		<result column="is_middle" property="isMiddle" />
+		<result column="is_owner" property="isOwner" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,race_type,league_type,match_no,unique_match_no,
+		match_id,match_name, status, match_time,
+		home_team,
+		guest_team,handicap, whole_score,
+		sp, fx_id, bf_id,
+		publish_time,
+		match_short_name,
+		home_team_short_name, guest_team_short_name,
+		home_img_path,
+		guest_img_path, week_of_year, is_del,
+		section_score,
+		is_middle, is_owner
+	</sql>
+
+	<select id="queryRaceById" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race
+		where id = #{id}
+	</select>
+
+	<select id="queryRaceByMatchId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race
+		where match_id = #{matchId}
+	</select>
+
+	<select id="queryRaceByUniqueMatchNo" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race
+		where unique_match_no = #{uniqueMatchNo}
+	</select>
+
+	<select id="queryRaceByIdList" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race
+		where id in
+		<foreach collection="raceIdList" item="raceId" open="("
+			separator="," close=")">#{raceId}</foreach>
+	</select>
+
+	<select id="countRaceByMatchId" resultType="int" parameterType="map">
+		select count(1)
+		from tj_race
+		where match_id = #{matchId}
+	</select>
+
+	<update id="deleteById" parameterType="java.lang.Long">
+		update tj_race set
+		is_del=1 where id = #{id}
+	</update>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="TjRace">
+		insert into
+		tj_race(race_type,status,match_no,unique_match_no,
+		match_id,league_type,match_name, match_time,
+		home_team,
+		guest_team,handicap,
+		whole_score,
+		sp,
+		fx_id, bf_id,
+		publish_time,
+		match_short_name,
+		home_team_short_name, guest_team_short_name,
+		home_img_path,
+		guest_img_path, week_of_year,
+		section_score, is_middle,
+		is_owner)
+		values(#{raceType},
+		#{status},
+		#{matchNo},
+		#{uniqueMatchNo},
+		#{matchId},
+		#{leagueType},
+		#{matchName},
+		#{matchTime},
+		#{homeTeam},
+		#{guestTeam},
+		#{handicap},
+		#{wholeScore},
+		#{sp},
+		#{fxId},
+		#{bfId},
+		#{publishTime},
+		#{matchShortName},
+		#{homeTeamShortName},
+		#{guestTeamShortName},
+		#{homeImgPath},
+		#{guestImgPath},
+		#{weekOfYear},
+		#{sectionScore},
+		#{isMiddle},
+		#{isOwner})
+	</insert>
+
+	<update id="updateRace" parameterType="TjRace">
+		update tj_race
+		<set>
+			<if test="matchName != null">
+				match_name = #{matchName},
+			</if>
+			<if test="publishTime != null">
+				publish_time = #{publishTime},
+			</if>
+			<if test="matchTime != null">
+				match_time = #{matchTime},
+			</if>
+			<if test="homeTeam != null">
+				home_team = #{homeTeam},
+			</if>
+			<if test="guestTeam != null">
+				guest_team = #{guestTeam},
+			</if>
+			<if test="leagueType != null">
+				league_type = #{leagueType},
+			</if>
+			<if test="handicap != null">
+				handicap = #{handicap},
+			</if>
+			<if test="matchShortName != null">
+				match_short_name = #{matchShortName},
+			</if>
+			<if test="homeTeamShortName != null">
+				home_team_short_name = #{homeTeamShortName},
+			</if>
+			<if test="guestTeamShortName != null">
+				guest_team_short_name = #{guestTeamShortName},
+			</if>
+			<if test="isMiddle != null">
+				is_middle = #{isMiddle},
+			</if>
+			<if test="isOwner != null">
+				is_owner = #{isOwner},
+			</if>
+			<if test="matchNo != null">
+				match_no = #{matchNo},
+			</if>
+			<if test="fxId != null">
+				fx_id = #{fxId},
+			</if>
+			<if test="matchId != null">
+				match_id = #{matchId},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateStatus" parameterType="map">
+		update tj_race set
+		status=#{newStatus} where id = #{id} and
+		status=#{oldStatus}
+	</update>
+
+	<select id="queryByPageCount" parameterType="map" resultType="int">
+		select count(1) from tj_race
+		<include refid="queryCondition" />
+	</select>
+
+	<select id="queryByPage" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tj_race
+		<include refid="queryCondition" />
+		<choose>
+			<when test="condition.order == 0"> order by match_time asc,match_no asc</when>
+			<when test="condition.order == 1"> order by match_time desc,match_no asc</when>
+			<otherwise></otherwise>
+		</choose>
+		limit
+		#{startIndex},#{pageSize}
+	</select>
+
+	<sql id="queryCondition">
+		<where>
+			<if test="condition.raceType != null">
+				and race_type = #{condition.raceType}
+			</if>
+			<if test="condition.weekOfYear != null">
+				and week_of_year = #{condition.weekOfYear}
+			</if>
+			<if test="condition.status != null and condition.status != -1">
+				and status = #{condition.status}
+			</if>
+			<if test="condition.statusList != null">
+				and
+				<foreach collection="condition.statusList" item="listItem"
+					open="(" close=")" separator="or">
+					status = #{listItem}
+				</foreach>
+			</if>
+			<if test="condition.startMatchTime != null">
+				and match_time>=#{condition.startMatchTime}
+			</if>
+			<if test="condition.endMatchTime != null">
+				<![CDATA[and match_time<=#{condition.endMatchTime}]]>
+			</if>
+			<if test="condition.fxIdExist != null and condition.fxIdExist == false">
+				and (fx_id is null or fx_id ='' or handicap like '%;_;_;%')
+			</if>
+			and is_del=0
+		</where>
+	</sql>
+
+	<update id="updateScoreByMatchId" parameterType="map">
+		update tj_race
+		set whole_score=#{wholeScore} where match_id = #{matchId}
+	</update>
+
+	<update id="updateScoreById" parameterType="map">
+		update tj_race
+		set
+		whole_score=#{wholeScore} where id = #{id}
+	</update>
+
+	<update id="updateMatchTimeByMatchId" parameterType="map">
+		update
+		tj_race set match_time=#{matchTime} where match_id = #{matchId}
+	</update>
+
+	<update id="updateFxIdByMatchId" parameterType="map">
+		update tj_race
+		<set>
+			<if test="fxId != null">
+				fx_id=#{fxId},
+			</if>
+			<if test="guestShortName != null">
+				guest_team_short_name=#{guestShortName},
+			</if>
+			<if test="homeShortName != null">
+				home_team_short_name=#{homeShortName},
+			</if>
+			<if test="guestImgPath != null">
+				guest_img_path=#{guestImgPath},
+			</if>
+			<if test="homeImgPath != null">
+				home_img_path=#{homeImgPath}
+			</if>
+		</set>
+		where match_id = #{matchId}
+	</update>
+
+	<update id="updateHandicapByMatchId" parameterType="map">
+		update tj_race
+		<set>
+			<if test="handicap != null">
+				handicap=#{handicap},
+			</if>
+			<if test="sp != null">
+				sp=#{sp}
+			</if>
+		</set>
+		where match_id = #{matchId}
+	</update>
+
+	<select id="queryStatusByIdList" parameterType="map" resultType="int">
+		select status from tj_race
+		<where>
+			id in
+			<foreach collection="raceIdList" item="raceId" open="("
+				separator="," close=")">
+				#{raceId}
+			</foreach>
+		</where>
+	</select>
+
+	<update id="stopRaceByMatchId" parameterType="map">
+		update
+		tj_race set
+		status=#{status}
+		where match_id = #{matchId}
+	</update>
+</mapper>

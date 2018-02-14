@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="false" />
+		<setting name="localCacheScope" value="STATEMENT" />
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	<typeAliases>
+		<typeAlias alias="Member" type="com.aicai.jcob.member.common.domain.Member" />
+		<typeAlias alias="MemberLogin" type="com.aicai.jcob.member.common.domain.MemberLogin" />
+		<typeAlias alias="MemberLoginToken" type="com.aicai.jcob.member.common.domain.MemberLoginToken" />
+		<typeAlias alias="MemberWallet" type="com.aicai.jcob.memberwallet.common.domain.MemberWallet" />
+		<typeAlias alias="MemberWalletLog" type="com.aicai.jcob.memberwallet.common.domain.MemberWalletLog" />
+		<typeAlias alias="MemberHuoyanWallet" type="com.aicai.jcob.memberwallet.common.domain.MemberHuoyanWallet" />
+		<typeAlias alias="MemberHuoyanWalletLog" type="com.aicai.jcob.memberwallet.common.domain.MemberHuoyanWalletLog" />
+		<typeAlias alias="MemberFeedback" type="com.aicai.jcob.member.common.domain.MemberFeedback" />
+		<typeAlias alias="MemberInfoLog" type="com.aicai.jcob.member.common.domain.MemberInfoLog" />
+		<typeAlias alias="MemberOperLog" type="com.aicai.jcob.member.common.domain.MemberOperLog" />
+		<typeAlias alias="MemberChargeLog" type="com.aicai.jcob.membercharge.common.domain.MemberChargeLog" />
+		<typeAlias alias="MemberChargeReturnLog" type="com.aicai.jcob.membercharge.common.domain.MemberChargeReturnLog" />
+		<typeAlias alias="MemberChargeChannel" type="com.aicai.jcob.membercharge.common.domain.MemberChargeChannel" />
+		<typeAlias alias="MemberChargeWay" type="com.aicai.jcob.membercharge.common.domain.MemberChargeWay" />
+		<typeAlias alias="MemberUseChargeWay" type="com.aicai.jcob.member.common.domain.MemberUseChargeWay" />
+		<typeAlias alias="MemberDrawMoneyLog" type="com.aicai.jcob.memberdrawmoney.common.domain.MemberDrawMoneyLog" />
+		<typeAlias alias="MemberDrawMoneyWay" type="com.aicai.jcob.memberdrawmoney.common.domain.MemberDrawMoneyWay" />
+		<typeAlias alias="MemberBizExceptionBill" type="com.aicai.jcob.memberwallet.common.domain.MemberBizExceptionBill" />
+		<typeAlias alias="DrawMoneyBank" type="com.aicai.jcob.memberdrawmoney.common.domain.DrawMoneyBank" />
+		<typeAlias alias="DrawMoneyBranchBank" type="com.aicai.jcob.memberdrawmoney.common.domain.DrawMoneyBranchBank" />
+		<typeAlias alias="ClientAppUseLog" type="com.aicai.jcob.client.common.domain.ClientAppUseLog" />
+		<typeAlias alias="ClientAppUser" type="com.aicai.jcob.client.common.domain.ClientAppUser" />
+		
+	</typeAliases>
+	<typeHandlers>
+    	<typeHandler handler="com.aicai.dao.mybatis.typehandler.CalendarTypeHandler"
+			javaType="java.util.Calendar" />
+		<typeHandler handler="com.aicai.dao.mybatis.typehandler.CalendarTypeHandler"
+			javaType="java.util.GregorianCalendar" />
+	</typeHandlers>
+	<mappers>
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberLoginMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberLoginTokenMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberWalletMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberWalletLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberHuoyanWalletMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberHuoyanWalletLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberFeedbackMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberInfoLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberOperLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberChargeLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberChargeReturnLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberChargeChannelMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberChargeWayMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberUseChargeWayMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberDrawMoneyLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberDrawMoneyWayMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/MemberBizExceptionBillMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/membermap/DrawMoneyBankMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/client/ClientAppUseLogMapper.xml" />
+		<mapper resource="jcobserverconfig/subconfig/mybatisconfig/client/ClientAppUserMapper.xml" />
+	</mappers>
+</configuration> 

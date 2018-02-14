@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberBizExceptionBillMapper" >
+  <resultMap id="BaseResultMap" type="MemberBizExceptionBill" >
+    <id column="id" property="id" />
+    <id column="member_id" property="memberId" />
+    <result column="amount" property="amount" />
+    <result column="amount_type" property="amountType" />
+    <result column="wallet_op_type" property="walletOpType" />
+    <result column="status" property="status"  />
+    <result column="operator" property="operator"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="remark" property="remark"  />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id,member_id, amount, amount_type, wallet_op_type, status, operator, create_time, update_time, remark
+  </sql>
+  <select id="pageBizExceptionBill" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from member_biz_exception_bill
+    where 
+    <![CDATA[
+    	create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+    	<if test="amountType != null">
+    	and	amount_type = #{amountType}
+    	</if>
+    	<if test="memberIdList != null">
+    	and	member_id in
+    	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+    		#{memberId}
+    	</foreach>
+    	</if>
+    	<if test="walletOpType != null">
+    	and	wallet_op_type = #{walletOpType}
+    	</if>
+      order by create_time desc
+  </select>
+  
+   <select id="countBizExceptionBill" resultType="java.lang.Integer" parameterType="map" >
+    select
+    	count(1)
+    from member_biz_exception_bill
+    where
+    <![CDATA[
+    	create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+    	<if test="amountType != null">
+    	and	amount_type = #{amountType}
+    	</if>
+    	<if test="memberIdList != null">
+    	and	member_id in
+    	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+    		#{memberId}
+    	</foreach>
+    	</if>
+    	<if test="walletOpType != null">
+    	and	wallet_op_type = #{walletOpType}
+    	</if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_biz_exception_bill
+    where Id = #{id}
+  </select>
+ 
+  <insert id="saveBizExceptionBill" parameterType="MemberBizExceptionBill" useGeneratedKeys="true" keyProperty="id"  >
+    insert into member_biz_exception_bill
+	   (
+	    amount,
+	    member_id,
+	    amount_type,
+	    wallet_op_type,
+	    status,
+	    operator,
+	    create_time,
+	    update_time,
+	    remark)
+	 values
+	   (
+	    #{amount},
+	    #{memberId},
+	    #{amountType},
+	    #{walletOpType},
+	    #{status},
+	    #{operator},
+	    #{createTime},
+	    #{updateTime},
+	    #{remark})
+  </insert>
+ 
+  <update id="updateBizExceptionBillStatus" parameterType="MemberBizExceptionBill" >
+    update member_biz_exception_bill
+    set 
+      status = #{newStatus}
+    where Id = #{id} and status = #{oldStatus}
+  </update>
+</mapper>

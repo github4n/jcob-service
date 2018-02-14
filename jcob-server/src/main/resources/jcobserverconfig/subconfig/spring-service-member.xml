@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<tx:annotation-driven />
+	
+	<bean name="memberWriteServiceImpl" class="com.aicai.jcob.member.service.impl.MemberWriteServiceImpl" />
+	<bean name="memberFeedbackWriteServiceImpl" class="com.aicai.jcob.member.service.impl.MemberFeedbackWriteServiceImpl" />
+	<bean name="memberSmsServiceImpl" class="com.aicai.jcob.member.service.impl.MemberSmsServiceImpl" />
+	<bean name="memberChargeWayWriteServiceImpl" class="com.aicai.jcob.membercharge.service.impl.MemberChargeWayWriteServiceImpl" />
+	<bean name="memberChargeLogWriteServiceImpl" class="com.aicai.jcob.membercharge.service.impl.MemberChargeLogWriteServiceImpl" />
+	
+	<bean name="memberWalletWriteServiceImpl" class="com.aicai.jcob.memberwallet.service.impl.MemberWalletWriteServiceImpl" />
+	<bean name="memberWalletLogWriteServiceImpl" class="com.aicai.jcob.memberwallet.service.impl.MemberWalletLogWriteServiceImpl" />
+	<bean name="memberHuoyanWalletWriteServiceImpl" class="com.aicai.jcob.memberwallet.service.impl.MemberHuoyanWalletWriteServiceImpl" />
+	<bean name="memberHuoyanWalletLogWriteServiceImpl" class="com.aicai.jcob.memberwallet.service.impl.MemberHuoyanWalletLogWriteServiceImpl" />
+	<bean name="memberBizExceptionBillWriteServiceImpl" class="com.aicai.jcob.memberwallet.service.impl.MemberBizExceptionBillWriteServiceImpl" />
+	<!-- 提款管理 -->
+	<bean name="memberDrawMoneyWriteServiceImpl" class="com.aicai.jcob.memberdrawmoney.service.impl.MemberDrawMoneyWriteServiceImpl" />
+	
+	<bean name="clientAppWriteServiceImpl" class="com.aicai.jcob.client.service.impl.ClientAppWriteServiceImpl" />
+</beans>

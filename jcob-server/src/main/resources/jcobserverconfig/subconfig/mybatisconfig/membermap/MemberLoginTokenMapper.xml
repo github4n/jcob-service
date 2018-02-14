@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberLoginTokenMapper" >
+  <resultMap id="BaseResultMap" type="MemberLoginToken" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="BIGINT" />
+    <result column="machine_id" property="machineId" jdbcType="VARCHAR" />
+    <result column="login_type" property="loginType" jdbcType="BIT" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="features" property="features" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, member_id, machine_id, login_type, token, status, create_time, update_time, features
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="MemberLoginToken" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member_login_token
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_login_token
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from member_login_token
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="MemberLoginToken" >
+    delete from member_login_token
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="MemberLoginToken" >
+    insert into member_login_token (id, member_id, machine_id, 
+      login_type, token, status, create_time, 
+      update_time, features)
+    values (#{id,jdbcType=BIGINT}, #{memberId,jdbcType=BIGINT}, #{machineId,jdbcType=VARCHAR}, 
+      #{loginType,jdbcType=BIT}, #{token,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{features,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="MemberLoginToken" >
+  	<selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+  
+    insert into member_login_token
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="machineId != null" >
+        machine_id,
+      </if>
+      <if test="loginType != null" >
+        login_type,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="features != null" >
+        features,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="machineId != null" >
+        #{machineId,jdbcType=VARCHAR},
+      </if>
+      <if test="loginType != null" >
+        #{loginType,jdbcType=BIT},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="features != null" >
+        #{features,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="MemberLoginToken" resultType="java.lang.Integer" >
+    select count(*) from member_login_token
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  
+  <select id="queryMemberLoginTokenByMemberIdAndMachineId" parameterType="map" resultMap="BaseResultMap" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_login_token
+    where member_id = #{memberId,jdbcType=BIGINT}
+    and  machine_id = #{machineId,jdbcType=VARCHAR}
+    and login_type = #{loginType,jdbcType=BIT}
+  </select>
+  
+  <select id="queryMemberLoginTokenByTokenAndMachineId" parameterType="map" resultMap="BaseResultMap" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_login_token
+    where token = #{token,jdbcType=VARCHAR}
+    and  machine_id = #{machineId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryMemberLoginTokenByMemberId" parameterType="map" resultMap="BaseResultMap" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_login_token
+    where member_id = #{memberId,jdbcType=BIGINT}
+  </select>
+  
+  <update id="updateByExampleSelective" parameterType="map" >
+    update member_login_token
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.memberId != null" >
+        member_id = #{record.memberId,jdbcType=BIGINT},
+      </if>
+      <if test="record.machineId != null" >
+        machine_id = #{record.machineId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginType != null" >
+        login_type = #{record.loginType,jdbcType=BIT},
+      </if>
+      <if test="record.token != null" >
+        token = #{record.token,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.features != null" >
+        features = #{record.features,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update member_login_token
+    set id = #{record.id,jdbcType=BIGINT},
+      member_id = #{record.memberId,jdbcType=BIGINT},
+      machine_id = #{record.machineId,jdbcType=VARCHAR},
+      login_type = #{record.loginType,jdbcType=BIT},
+      token = #{record.token,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      features = #{record.features,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <!-- 
+  <update id="updateByPrimaryKeySelective" parameterType="MemberLoginToken" >
+    update member_login_token
+    <set >
+      <if test="memberId != null" >
+        member_id = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="machineId != null" >
+        machine_id = #{machineId,jdbcType=VARCHAR},
+      </if>
+      <if test="loginType != null" >
+        login_type = #{loginType,jdbcType=BIT},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="features != null" >
+        features = #{features,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   -->
+  
+  <update id="updateByPrimaryKey" parameterType="MemberLoginToken" >
+    update member_login_token
+    set member_id = #{memberId,jdbcType=BIGINT},
+      machine_id = #{machineId,jdbcType=VARCHAR},
+      login_type = #{loginType,jdbcType=BIT},
+      token = #{token,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      features = #{features,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberLoginTokenStatus" parameterType="map" >
+  	update member_login_token set status = #{status,jdbcType=BIT}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberLoginTokenToken" parameterType="map">
+  	update member_login_token set token = #{token,jdbcType=VARCHAR},status = #{status,jdbcType=BIT}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateMemberLoginTokenByMemberIdLoginTypeInValid" parameterType="map">
+  	update member_login_token set status = #{newStatus,jdbcType=BIT}
+  	where member_id = #{memberId,jdbcType=BIGINT}
+  	and login_type = #{loginType,jdbcType=BIT}
+  	and status = #{status,jdbcType=BIT}
+  </update>
+  
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.ClientTemplateMapper">
+    <resultMap id="BaseResultMap" type="ClientTemplate">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="client_type" property="clientType" jdbcType="INTEGER"/>
+        <result column="client_type_sub" property="clientTypeSub" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="template_name" property="templateName" jdbcType="VARCHAR"/>
+        <result column="page_id" property="pageId" jdbcType="TINYINT"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+        <result column="expand" property="expand" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+       id, client_type, client_type_sub, status, template_name, page_id, update_user, update_date, expand
+    </sql>
+
+    <sql id="tableName">client_template ct</sql>
+
+    <sql id="condition">
+        <if test="clientType !=null">
+            client_type = #{clientType}
+        </if>
+        <if test="pageId !=null">
+            and page_id = #{pageId}
+        </if>
+        <if test="status !=null">
+            and status = #{status}
+        </if>
+        <if test="updateUser !=null">
+            and update_user = #{updateUser}
+        </if>
+        <if test="ids!=null">
+            and id in
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="java.util.HashMap" keyProperty="id">
+        insert into
+        client_template
+        (client_type, client_type_sub, status, template_name, page_id, update_user, update_date, expand)
+        VALUES
+        (#{clientType},#{clientTypeSub},#{status},#{templateName},#{pageId},#{updateUser},#{updateDate},#{expand})
+    </insert>
+
+    <update id="updateTemplate" parameterType="java.util.HashMap">
+        update <include refid="tableName"/>
+        SET
+        status=#{status},page_id=#{pageId},template_name=#{templateName},
+        update_date=#{updateDate},update_user=#{updateUser}
+        where id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectListByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <select id="selectPageByCondition" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{startIndex},#{pageSize}
+    </select>
+
+    <select id="countByCondition" parameterType="java.util.HashMap" resultType="int">
+        select
+        count(1)
+        from
+        <include refid="tableName"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from
+        client_template
+        where id =#{id}
+    </delete>
+</mapper>

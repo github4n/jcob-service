@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberChargeWayMapper" >
+  <resultMap id="BaseResultMap" type="MemberChargeWay" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="charge_way_index" property="chargeWayIndex" jdbcType="TINYINT" />
+    <result column="charge_way_name" property="chargeWayName" jdbcType="VARCHAR" />
+    <result column="client_type" property="clientType" jdbcType="BIT" />
+    <result column="charge_channel_index" property="chargeChannelIndex" jdbcType="TINYINT" />
+    <result column="charge_channel_name" property="chargeChannelName" jdbcType="VARCHAR" />
+    <result column="fee_flag" property="feeFlag" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, charge_way_index, charge_way_name, client_type, charge_channel_index, charge_channel_name, 
+    fee_flag, create_time, update_time
+  </sql>
+  <!-- 
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.aicai.jcob.common.entity.MemberChargeWayExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member_charge_way
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from member_charge_way
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="queryMemberChargeWayByChargeWayIndexClientType" resultMap="BaseResultMap" parameterType="map" >
+  	select 
+    <include refid="Base_Column_List" />
+    from member_charge_way
+    where charge_way_index = #{chargeWayIndex,jdbcType=TINYINT}
+    and client_type = #{clientType,jdbcType=TINYINT}
+  </select>
+  <!-- 
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from member_charge_way
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.aicai.jcob.common.entity.MemberChargeWayExample" >
+    delete from member_charge_way
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  -->
+  <!-- 
+  <insert id="insert" parameterType="com.aicai.jcob.common.entity.MemberChargeWay" >
+    insert into member_charge_way (id, charge_way_index, charge_way_name, 
+      client_type, charge_channel_index, charge_channel_name, 
+      fee_flag, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{chargeWayIndex,jdbcType=TINYINT}, #{chargeWayName,jdbcType=VARCHAR}, 
+      #{clientType,jdbcType=BIT}, #{chargeChannelIndex,jdbcType=TINYINT}, #{chargeChannelName,jdbcType=VARCHAR}, 
+      #{feeFlag,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  -->
+  <insert id="insertSelective" parameterType="MemberChargeWay" >
+    <selectKey resultType = "long" keyProperty = "id">
+  		SELECT LAST_INSERT_ID() AS ID
+  	</selectKey>
+    
+    insert into member_charge_way
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="chargeWayIndex != null" >
+        charge_way_index,
+      </if>
+      <if test="chargeWayName != null" >
+        charge_way_name,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="chargeChannelIndex != null" >
+        charge_channel_index,
+      </if>
+      <if test="chargeChannelName != null" >
+        charge_channel_name,
+      </if>
+      <if test="feeFlag != null" >
+        fee_flag,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="chargeWayIndex != null" >
+        #{chargeWayIndex,jdbcType=TINYINT},
+      </if>
+      <if test="chargeWayName != null" >
+        #{chargeWayName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null" >
+        #{clientType,jdbcType=BIT},
+      </if>
+      <if test="chargeChannelIndex != null" >
+        #{chargeChannelIndex,jdbcType=TINYINT},
+      </if>
+      <if test="chargeChannelName != null" >
+        #{chargeChannelName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeFlag != null" >
+        #{feeFlag,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <!-- 
+  <select id="countByExample" parameterType="com.aicai.jcob.common.entity.MemberChargeWayExample" resultType="java.lang.Integer" >
+    select count(*) from member_charge_way
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  -->
+  <!-- 
+  <update id="updateByExampleSelective" parameterType="map" >
+    update member_charge_way
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.chargeWayIndex != null" >
+        charge_way_index = #{record.chargeWayIndex,jdbcType=TINYINT},
+      </if>
+      <if test="record.chargeWayName != null" >
+        charge_way_name = #{record.chargeWayName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clientType != null" >
+        client_type = #{record.clientType,jdbcType=BIT},
+      </if>
+      <if test="record.chargeChannelIndex != null" >
+        charge_channel_index = #{record.chargeChannelIndex,jdbcType=TINYINT},
+      </if>
+      <if test="record.chargeChannelName != null" >
+        charge_channel_name = #{record.chargeChannelName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeFlag != null" >
+        fee_flag = #{record.feeFlag,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update member_charge_way
+    set id = #{record.id,jdbcType=BIGINT},
+      charge_way_index = #{record.chargeWayIndex,jdbcType=TINYINT},
+      charge_way_name = #{record.chargeWayName,jdbcType=VARCHAR},
+      client_type = #{record.clientType,jdbcType=BIT},
+      charge_channel_index = #{record.chargeChannelIndex,jdbcType=TINYINT},
+      charge_channel_name = #{record.chargeChannelName,jdbcType=VARCHAR},
+      fee_flag = #{record.feeFlag,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aicai.jcob.common.entity.MemberChargeWay" >
+    update member_charge_way
+    <set >
+      <if test="chargeWayIndex != null" >
+        charge_way_index = #{chargeWayIndex,jdbcType=TINYINT},
+      </if>
+      <if test="chargeWayName != null" >
+        charge_way_name = #{chargeWayName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null" >
+        client_type = #{clientType,jdbcType=BIT},
+      </if>
+      <if test="chargeChannelIndex != null" >
+        charge_channel_index = #{chargeChannelIndex,jdbcType=TINYINT},
+      </if>
+      <if test="chargeChannelName != null" >
+        charge_channel_name = #{chargeChannelName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeFlag != null" >
+        fee_flag = #{feeFlag,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aicai.jcob.common.entity.MemberChargeWay" >
+    update member_charge_way
+    set charge_way_index = #{chargeWayIndex,jdbcType=TINYINT},
+      charge_way_name = #{chargeWayName,jdbcType=VARCHAR},
+      client_type = #{clientType,jdbcType=BIT},
+      charge_channel_index = #{chargeChannelIndex,jdbcType=TINYINT},
+      charge_channel_name = #{chargeChannelName,jdbcType=VARCHAR},
+      fee_flag = #{feeFlag,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  -->
+  
+  <update id="updateChargeWayFeeFlag" parameterType="map" >
+  	update member_charge_way
+  	set fee_flag = #{feeFlag,jdbcType=BIT}
+  	where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

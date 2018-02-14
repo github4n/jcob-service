@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	
+	<!-- 各数据源bean定义 -->
+	<bean id="dataSourceMember" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+    		<property name="driverClassName" value="${jdbc.mysql.driver}" />
+			<property name="url" value="${jdbc.member.url}" />
+			<property name="username" value="${jdbc.member.username}" />
+			<property name="password" ref="passwordMember" />
+			<!-- Connection Pooling Info -->
+			<property name="initialSize" value="${member_db.min_connection_count}" /><!--连接池初始化时创建的连接数。-->
+			<property name="maxActive" value="${member_db.max_connection_count}" /><!--连接池中保留的最大连接数。Default: 8 -->
+			<property name="validationQuery" value="SELECT 1" />
+			<property name="minIdle" value="${member_db.min_connection_count}" /><!--最小空闲的连接数,30个。default:0-->
+			<property name="testOnBorrow" value="false" />
+			<property name="filters" value="stat" />
+	</bean>
+		
+	<bean name="passwordMember" class="com.aicai.passwordencrypt.DbPasswordFactoryBean">
+		<property name="cryptWord" value="${jdbc.member.password}" />
+	</bean>
+	
+		
+	
+</beans>

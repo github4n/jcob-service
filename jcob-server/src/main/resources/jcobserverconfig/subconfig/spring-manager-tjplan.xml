@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<tx:annotation-driven />
+	
+	<bean name="tjExpertInfoManagerImpl" class="com.aicai.jcob.tjexpert.manager.impl.TjExpertInfoManagerImpl" />
+	<bean name="tjExpertApplyManagerImpl" class="com.aicai.jcob.tjexpert.manager.impl.TjExpertApplyManagerImpl" />
+	<bean name="tjExpertSetInfoManagerImpl" class="com.aicai.jcob.tjexpert.manager.impl.TjExpertSetInfoManagerImpl" />
+	<bean name="tjRaceManagerImpl" class="com.aicai.jcob.tjrace.manager.impl.TjRaceManagerImpl" />
+	<bean name="tjRaceTaskManagerImpl" class="com.aicai.jcob.tjrace.manager.impl.TjRaceTaskManagerImpl" />
+	<bean name="tjExpertLevelLogManagerImpl" class="com.aicai.jcob.tjexpert.manager.impl.TjExpertLevelLogManagerImpl" />
+	<bean name="tjPlanManagerImpl" class="com.aicai.jcob.tjplan.manager.impl.TjPlanManagerImpl" />
+	<bean name="tjPlanItemManagerImpl" class="com.aicai.jcob.tjplan.manager.impl.TjPlanItemManagerImpl" />
+	<bean name="tjOrderManagerImpl" class="com.aicai.jcob.tjplan.manager.impl.TjOrderManagerImpl" />
+	<bean name="tjLookLogManagerImpl" class="com.aicai.jcob.tjplan.manager.impl.TjLookLogManagerImpl" />
+	<bean name="tjAttentionExpertManagerImpl" class="com.aicai.jcob.tjexpert.manager.impl.TjAttentionExpertManagerImpl" />
+
+	<bean name="clientModuleAdManagerImpl" class="com.aicai.jcob.adver.manager.impl.ClientModuleAdManagerImpl" />
+	<bean name="clientModuleManagerImpl" class="com.aicai.jcob.adver.manager.impl.ClientModuleManagerImpl" />
+	<bean name="clientTemplateManagerImpl" class="com.aicai.jcob.adver.manager.impl.ClientTemplateManagerImpl" />
+	<bean name="clientVersionAgentIdManagerImpl" class="com.aicai.jcob.adver.manager.impl.ClientVersionAgentIdManagerImpl" />
+	<bean name="clientFunctionRecordManagerImpl" class="com.aicai.jcob.adver.manager.impl.ClientFunctionRecordManagerImpl"/>
+	<bean name="clientUpgradeManagerImpl" class="com.aicai.jcob.client.manager.impl.ClientUpgradeManagerImpl"></bean>
+	<bean name="clientSecretManagerImpl" class="com.aicai.jcob.client.manager.impl.ClientSecretManagerImpl" />
+	<bean name="clientChannelManagerImpl" class="com.aicai.jcob.client.manager.impl.ClientChannelManagerImpl" />
+	<bean name="auditSwitchManagerImpl" class="com.aicai.jcob.audit.common.impl.AuditSwitchManagerImpl"/>
+</beans>

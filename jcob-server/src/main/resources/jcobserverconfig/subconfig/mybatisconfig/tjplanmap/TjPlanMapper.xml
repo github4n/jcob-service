@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjPlanMapper" >
+  <resultMap id="BaseResultMap" type="TjPlan" >
+    <id column="id" property="id"  />
+    <result column="race_type" property="raceType"  />
+    <result column="game_id" property="gameId" />
+    <result column="member_id" property="memberId"  />
+    <result column="expert_level" property="expertLevel"  />
+    <result column="looker_count" property="lookerCount"  />
+    <result column="amount" property="amount"  />
+    <result column="win_race_count" property="winRaceCount" />
+    <result column="league_type_bit" property="leagueTypeBit"  />
+    <result column="min_race_id" property="minRaceId"  />
+    <result column="max_race_id" property="maxRaceId"  />
+    <result column="race_id_list" property="raceIdList"  />
+    <result column="race_status" property="raceStatus"  />
+    <result column="open_status" property="openStatus"  />
+    <result column="is_del" property="isDel" />
+    <result column="titile" property="titile"  />
+    <result column="plan_describe" property="describe"  />
+    <result column="features" property="features" />
+    <result column="flag_bit" property="flagBit" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="sort_no" property="sortNo" jdbcType="BIGINT" />
+    <result column="min_race_match_time" property="minRaceMatchTime"  />
+    <result column="client_type" property="clientType" />
+    <result column="channel" property="channel" />
+    <result column="is_show" property="isShow" />
+  </resultMap>
+  <resultMap id="PageMyLookedPlanBaseResultMap" type="com.aicai.jcob.tjplan.common.domain.result.PageMyLookedTjplanResult" >
+    <id column="id" property="id"  />
+    <result column="race_type" property="raceType"  />
+    <result column="game_id" property="gameId" />
+    <result column="member_id" property="memberId"  />
+    <result column="expert_level" property="expertLevel"  />
+    <result column="looker_count" property="lookerCount"  />
+    <result column="amount" property="amount"  />
+    <result column="win_race_count" property="winRaceCount" />
+    <result column="league_type_bit" property="leagueTypeBit"  />
+    <result column="min_race_id" property="minRaceId"  />
+    <result column="max_race_id" property="maxRaceId"  />
+    <result column="race_id_list" property="raceIdList"  />
+    <result column="race_status" property="raceStatus"  />
+    <result column="open_status" property="openStatus"  />
+    <result column="is_del" property="isDel" />
+    <result column="titile" property="titile"  />
+    <result column="plan_describe" property="describe"  />
+    <result column="features" property="features" />
+    <result column="flag_bit" property="flagBit" />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="sort_no" property="sortNo" jdbcType="BIGINT" />
+    <result column="min_race_match_time" property="minRaceMatchTime"  />
+    <result column="client_type" property="clientType" />
+    <result column="channel" property="channel" />
+    <result column="looked_time" property="lookedTime" />
+  </resultMap>
+  
+   <resultMap id="pageAdminPlanResult" type="com.aicai.jcob.tjplan.common.domain.result.PageAdminPlanVo" >
+    <result column="id" property="planId"  />
+    <result column="amount" property="amount" />
+    <result column="member_id" property="expertMemberId"  />
+    <result column="game_id" property="gameType"  />
+    <result column="race_type" property="raceType"  />
+    <result column="expert_level" property="expertLevel"  />
+    <result column="client_type" property="clientType"  />
+    <result column="race_status" property="raceStatus"  />
+    <result column="planCreateTime" property="planCreateTime"  />
+    <result column="open_status" property="openStatus"  />
+    <result column="win_race_count" property="winRaceCount" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, race_type, game_id, member_id, expert_level, looker_count, amount, win_race_count, 
+    league_type_bit, min_race_id, max_race_id, race_id_list, race_status, open_status, 
+    is_del, titile, plan_describe, features, flag_bit, create_time, update_time, sort_no, 
+    min_race_match_time,client_type,channel,is_show
+  </sql>
+  
+  
+ 
+  <select id="queryIdListByMaxRaceId" parameterType="map" resultType="long">
+      select id from tj_plan where max_race_id = #{maxRaceId}
+	  limit #{startIndex},#{pageSize}
+  </select>
+	
+  <select id="queryIdListByMaxRaceIdCount" parameterType="map" resultType="int">
+		SELECT COUNT(id) from tj_plan where max_race_id=#{maxRaceId}
+  </select>
+  
+  <select id="queryTjPlanById" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan
+    where id = #{id}
+  </select>
+  <select id="queryTjPlanByIdList" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan
+    where id in 
+    <foreach collection="planIdList" item="planId" open="(" separator="," close=")">
+    	#{planId}
+    </foreach>
+  </select>
+  <!-- queryTjPlanByTime -->
+  <select id="queryTjPlanByTime" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan
+    where member_id = #{memberId} AND tj_plan.create_time &gt;= #{startTime} 
+    AND tj_plan.create_time &lt;= #{endTime}
+    order by tj_plan.create_time desc
+  </select>
+  <!--  根据memberId查询实验室专家最早发推荐时间-->
+  <select id="selectFirstPlanByMemberId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+   SELECT  <include refid="Base_Column_List" />
+   FROM tj_plan 
+   WHERE tj_plan.member_id = #{memberId} ORDER BY tj_plan.create_time ASC
+   limit 0,1
+  </select>
+  
+  <select id="selectFirstPlanByMemberIdStartTime" resultMap="BaseResultMap" parameterType="java.lang.Long">
+   SELECT  <include refid="Base_Column_List" />
+   FROM tj_plan 
+   WHERE tj_plan.member_id = #{memberId}   AND tj_plan.create_time &gt;= #{startTime}  ORDER BY tj_plan.create_time ASC
+   limit 0,1
+  </select>
+  
+  
+  <insert id="saveTjPlan" parameterType="TjPlan" useGeneratedKeys="true" keyProperty="id">
+    insert into tj_plan
+		  (
+		   race_type,
+		   game_id,
+		   member_id,
+		   expert_level,
+		   looker_count,
+		   amount,
+		   win_race_count,
+		   league_type_bit,
+		   min_race_id,
+		   max_race_id,
+		   race_id_list,
+		   race_status,
+		   open_status,
+		   is_del,
+		   titile,
+		   plan_describe,
+		   features,
+		   flag_bit,
+		   create_time,
+		   update_time,
+		   sort_no,
+		   min_race_match_time,
+		   client_type,
+		   channel,
+		   is_show)
+		values
+		  (
+		   #{raceType},
+		   #{gameId},
+		   #{memberId},
+		   #{expertLevel},
+		   #{lookerCount},
+		   #{amount},
+		   #{winRaceCount},
+		   #{leagueTypeBit},
+		   #{minRaceId},
+		   #{maxRaceId},
+		   #{raceIdList},
+		   #{raceStatus},
+		   #{openStatus},
+		   #{isDel},
+		   #{titile},
+		   #{describeToDb},
+		   #{features},
+		   #{flagBit},
+		   #{createTime},
+		   #{updateTime},
+		   #{sortNo},
+		   #{minRaceMatchTime},
+		   #{clientType},
+		   #{channel},
+		   #{isShow})
+
+  </insert>
+ 
+  <update id="addPlanLookCount" parameterType="map" >
+    update tj_plan
+    set looker_count = looker_count + 1
+    where id = #{id}
+  </update>
+  <update id="updateSortNoByPlanId" parameterType="map" >
+    update tj_plan
+    set sort_no = #{sortNo}
+    where id = #{id}
+  </update>
+  
+   <update id="updateTjPlanForCheckEfect" parameterType="map" >
+    update tj_plan
+    	SET update_time = now(), open_status = #{openStatus} ,win_race_count = #{winRaceCount},race_status = #{raceStatus}
+    where id = #{id}
+  </update>
+  
+  
+  
+  <select id="pageTjPlanToHall" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    <if test="planIdList != null">
+    	,FIND_IN_SET(id,#{planIdList}) idx
+    </if>
+    from tj_plan
+    <where>
+    	 <if test="raceStatus != null and raceStatus.index != 2">
+    	 	race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[ race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="gameTypeList != null">
+    	and game_id in
+    		<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    			#{gameType.index}
+    		</foreach>
+    	</if>
+    	<if test="tjExpertLevelList != null">
+    	and expert_level in
+    		<foreach collection="tjExpertLevelList" item="expertlevel" open="(" separator="," close=")">
+    			#{expertlevel.index}
+    		</foreach>
+    	</if>
+    	<if test="leagueTypeBitList != null">
+    	and 
+    		<foreach collection="leagueTypeBitList" item="leagueTypeBit" open="(" separator="  or  " close=")">
+    		 <![CDATA[league_type_bit&#{leagueTypeBit}  = #{leagueTypeBit}]]>
+    		</foreach>
+    	</if>
+    	and is_show = 1
+    </where>
+    order by 
+    <if test="raceStatus == null"> create_time desc</if>
+    <if test="raceStatus!= null and raceStatus.index == 0 and planIdList != null"> idx asc,sort_no desc</if>
+    <if test="raceStatus!= null and raceStatus.index == 0 and planIdList == null"> sort_no desc</if>
+    <if test="raceStatus!= null and raceStatus.index == 1"> min_race_match_time desc</if>
+    <if test="raceStatus!= null and raceStatus.index >=2"> open_status desc,win_race_count desc,min_race_match_time desc</if>
+    limit #{startIndex},#{pageSize}
+    
+  </select>
+  <select id="countTjPlanToHall" resultType="int" parameterType="map">
+    select 
+  		  count(id)
+    from tj_plan
+    <where>
+    	 <if test="raceStatus != null and raceStatus.index != 2">
+    	 	race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[ race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="gameTypeList != null">
+    	and game_id in
+    		<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    			#{gameType.index}
+    		</foreach>
+    	</if>
+    	<if test="tjExpertLevelList != null">
+    	and expert_level in
+    		<foreach collection="tjExpertLevelList" item="expertlevel" open="(" separator="," close=")">
+    			#{expertlevel.index}
+    		</foreach>
+    	</if>
+    	<if test="leagueTypeBitList != null">
+    	and 
+    		<foreach collection="leagueTypeBitList" item="leagueTypeBit" open="(" separator="  or  " close=")">
+    		 <![CDATA[league_type_bit&#{leagueTypeBit}  = #{leagueTypeBit}]]>
+    		</foreach>
+    	</if>
+    	and is_show = 1
+    </where>
+  </select>
+  
+  <update id="updateRaceStatus" parameterType="map" >
+    update tj_plan
+    set race_status = #{raceStatus}
+    where id = #{id}
+  </update>
+  <update id="updatePlanListRaceStatus" parameterType="map" >
+    update tj_plan
+    set race_status = #{raceStatus},
+    update_time = #{updateTime}
+    where id in
+    <foreach collection="planIdList" item="planId" open="(" separator="," close=")">
+    	#{planId}
+    </foreach>
+  </update>
+  
+   <select id="pageMyPublishPlan" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan 
+    where 
+    	member_id = #{memberId}
+   		 <![CDATA[
+    	and create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+    	<if test="raceStatus != null and raceStatus.index != 2">
+    	 	and race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[and race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="isHit != null and isHit">
+    	<![CDATA[
+    		and win_race_count > 0
+    	]]>
+    	</if>
+    order by  create_time desc
+    limit #{startIndex},#{pageSize}
+    
+  </select>
+  <select id="countMyPublishPlan" resultType="int" parameterType="map">
+    select 
+  		  count(id)
+   	from tj_plan 
+   	 where 
+    	member_id = #{memberId}
+   		 <![CDATA[
+    	and create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+    	 <if test="raceStatus != null and raceStatus.index != 2">
+    	 	and race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[and race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="isHit != null and isHit">
+    	<![CDATA[
+    		and win_race_count > 0
+    	]]>
+    	</if>
+  </select>
+  
+   <select id="pageMyLookedPlan" resultMap="PageMyLookedPlanBaseResultMap" parameterType="map">
+   select plan.*,look.create_time looked_time 
+   from tj_plan plan ,tj_look_log look 
+   where plan.id = look.plan_id 
+   		and look.member_id = #{memberId}
+   		 <![CDATA[
+    	and look.create_time >= #{startDate}
+    	and look.create_time < #{endDate}
+    	]]>
+    	 <if test="raceStatus != null and raceStatus.index != 2">
+    	 	and plan.race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[and plan.race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="isHit != null and isHit">
+    	<![CDATA[
+    		and plan.win_race_count > 0
+    	]]>
+    	</if>
+    order by  look.create_time desc
+    limit #{startIndex},#{pageSize}
+    
+  </select>
+  <select id="countMyLookedPlan" resultType="int" parameterType="map">
+   select count(1)
+   from tj_plan plan ,tj_look_log look 
+   where plan.id = look.plan_id 
+   		and look.member_id = #{memberId}
+   		 <![CDATA[
+    	and look.create_time >= #{startDate}
+    	and look.create_time < #{endDate}
+    	]]>
+    	 <if test="raceStatus != null and raceStatus.index != 2">
+    	 	and plan.race_status = #{raceStatus.index}
+    	</if>
+    	 <if test="raceStatus != null and raceStatus.index == 2">
+    	 	<![CDATA[and plan.race_status >= #{raceStatus.index}]]>
+    	</if>
+    	<if test="isHit != null and isHit">
+    	<![CDATA[
+    		and plan.win_race_count > 0
+    	]]>
+    	</if>
+  </select>
+  
+  
+   <select id="pageMyAttentionExpertPublishPlan" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan 
+    where 
+    	member_id in
+    	<foreach collection="expertMemberIdList" item="expertMemberId" open="(" separator="," close=")">
+    		#{expertMemberId}
+    	</foreach>
+   		 <![CDATA[
+    	and create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+    order by  min_race_match_time desc
+    limit #{startIndex},#{pageSize}
+    
+  </select>
+  <select id="countMyAttentionExpertPublishPlan" resultType="int" parameterType="map">
+    select 
+  		  count(id)
+   	from tj_plan 
+   	 where 
+    		member_id in
+    	<foreach collection="expertMemberIdList" item="expertMemberId" open="(" separator="," close=")">
+    		#{expertMemberId}
+    	</foreach>
+   		 <![CDATA[
+    	and create_time >= #{startDate}
+    	and create_time < #{endDate}
+    	]]>
+  </select>
+  
+  <select id="adminPagePlan" resultMap="pageAdminPlanResult" parameterType="map" >
+    select plan.id,plan.amount,plan.game_id gameType,plan.race_type,plan.expert_level
+    ,plan.client_type,plan.race_status,plan.create_time planCreateTime,plan.open_status
+    ,plan.win_race_count,plan.member_id expertMemberId
+    from tj_plan plan
+    where 
+    <![CDATA[
+        plan.create_time >= #{startDate}
+    	AND plan.create_time <#{endDate}
+    	]]>
+    	<if test="planId != null">
+    	and plan.id = #{planId}
+    	</if>
+    	<if test="memberIdList != null">
+	   	and plan.member_id in
+	   	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+	   		#{memberId}
+	   	</foreach>
+	   </if>
+	    <if test="expertLevelList != null">
+    	and plan.expert_level in
+    	<foreach collection="expertLevelList" item="expertLevel" open="(" separator="," close=")">
+    		#{expertLevel.index}
+    	</foreach>
+    	</if>
+    	
+    <if test="leftAndEqualAmount != null">
+    	<![CDATA[and plan.amount >= #{leftAndEqualAmount}]]>
+    </if>
+    <if test="rightAndEqualAmount != null">
+      <![CDATA[	and plan.amount <= #{rightAndEqualAmount}]]>
+    </if>
+    <if test="gameTypeList != null">
+    	and plan.game_id in
+    	<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    		#{gameType.index}
+    	</foreach>
+    </if>
+    <if test="raceTypeList != null">
+    	and plan.race_type in
+    	<foreach collection="raceTypeList" item="raceType" open="(" separator="," close=")">
+    		#{raceType.index}
+    	</foreach>
+    </if>
+    <if test="clientTypeList != null">
+    	and plan.client_type in
+    	<foreach collection="clientTypeList" item="clientType" open="(" separator="," close=")">
+    		#{clientType.index}
+    	</foreach>
+    </if>
+    <if test="raceStatuList != null">
+    	and plan.race_status in
+    	<foreach collection="raceStatuList" item="raceStatus" open="(" separator="," close=")">
+    		#{raceStatus.index}
+    	</foreach>
+    </if>
+    <if test="winstatus != null and winstatus ==0">
+    	and plan.open_status = 0
+    </if>
+    <if test="winstatus != null and winstatus ==2">
+    	and plan.open_status = 1 and plan.win_race_count > 0
+    </if>
+    <if test="winstatus != null and winstatus ==1">
+    	and plan.open_status = 1 and plan.win_race_count = 0
+    </if>
+   	order by plan.create_time desc
+   	limit #{startIndex},#{pageSize}
+  </select>
+  
+  <select id="adminCountPlan" resultType="java.lang.Integer" parameterType="map" >
+    select count(1)
+    from tj_plan plan
+    where 
+    <![CDATA[
+        plan.create_time >= #{startDate}
+    	AND plan.create_time <#{endDate}
+    	]]>
+    	<if test="planId != null">
+    	and plan.id = #{planId}
+    	</if>
+    	<if test="memberIdList != null">
+	   	and plan.member_id in
+	   	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+	   		#{memberId}
+	   	</foreach>
+	   </if>
+	    <if test="expertLevelList != null">
+    	and plan.expert_level in
+    	<foreach collection="expertLevelList" item="expertLevel" open="(" separator="," close=")">
+    		#{expertLevel.index}
+    	</foreach>
+    	</if>
+    	
+    <if test="leftAndEqualAmount != null">
+    	<![CDATA[and plan.amount >= #{leftAndEqualAmount}]]>
+    </if>
+    <if test="rightAndEqualAmount != null">
+      <![CDATA[	and plan.amount <= #{rightAndEqualAmount}]]>
+    </if>
+    <if test="gameTypeList != null">
+    	and plan.game_id in
+    	<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    		#{gameType.index}
+    	</foreach>
+    </if>
+    <if test="raceTypeList != null">
+    	and plan.race_type in
+    	<foreach collection="raceTypeList" item="raceType" open="(" separator="," close=")">
+    		#{raceType.index}
+    	</foreach>
+    </if>
+    <if test="clientTypeList != null">
+    	and plan.client_type in
+    	<foreach collection="clientTypeList" item="clientType" open="(" separator="," close=")">
+    		#{clientType.index}
+    	</foreach>
+    </if>
+    <if test="raceStatuList != null">
+    	and plan.race_status in
+    	<foreach collection="raceStatuList" item="raceStatus" open="(" separator="," close=")">
+    		#{raceStatus.index}
+    	</foreach>
+    </if>
+    <if test="winstatus != null and winstatus ==0">
+    	and plan.open_status = 0
+    </if>
+    <if test="winstatus != null and winstatus ==2">
+    	and plan.open_status = 1 and plan.win_race_count > 0
+    </if>
+    <if test="winstatus != null and winstatus ==1">
+    	and plan.open_status = 1 and plan.win_race_count = 0
+    </if>
+  </select>
+ 
+  <select id="queryTjplanToIndexAutoRecommend" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from tj_plan
+    where 
+    	create_time >= #{startDate}
+    	and race_status = 0
+    	and amount >0
+    	and is_show = 1
+    order by 
+    <if test="rule == 1"> looker_count desc</if>
+    <if test="rule == 2"> create_time desc</if>
+    limit 0,#{size}
+  </select>
+   <update id="updateIsShowByMemberId" parameterType="map" >
+    update tj_plan
+    set is_show = #{isShow}
+    where member_id = #{memberId}  and create_time >= #{startDate} 
+    <if test="level != null">and expert_level = #{level}</if>
+    <if test="raceStatus != null">and race_status = #{raceStatus}</if>
+     
+  </update>
+ 
+</mapper>

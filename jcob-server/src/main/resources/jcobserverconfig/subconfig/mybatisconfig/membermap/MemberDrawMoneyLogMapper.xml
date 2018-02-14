@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberDrawMoneyLogMapper" >
+  <resultMap id="BaseResultMap" type="MemberDrawMoneyLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="third_draw_no" property="thirdDrawNo"  />
+    <result column="member_id" property="memberId" />
+    <result column="amount" property="amount"  />
+    <result column="handing_cost" property="handingCost" />
+    <result column="status" property="status" />
+    <result column="audit_status" property="auditStatus"  />
+    <result column="auditor" property="auditor"  />
+    <result column="audit_time" property="auditTime" />
+    <result column="audit_info" property="auditInfo" />
+    <result column="draw_info" property="drawInfo"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"/>
+    <result column="request_time" property="requestTime"  />
+    <result column="response_time" property="responseTime"/>
+    <result column="draw_money_way_id" property="drawMoneyWayId" />
+    <result column="client_type" property="clientType"/>
+    <result column="channel" property="channel"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, third_draw_no, member_id, amount, handing_cost, status, audit_status, auditor, 
+    audit_time, audit_info,draw_info, create_time, update_time,draw_money_way_id,request_time,response_time,client_type,channel
+  </sql>
+  <select id="queryByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from member_draw_money_log where id = #{id}
+  </select>
+  
+  <insert id="saveDrawMoneyLog" parameterType="MemberDrawMoneyLog" useGeneratedKeys="true" keyProperty="id">
+    insert into member_draw_money_log
+	   (
+	    third_draw_no,
+	    member_id,
+	    amount,
+	    handing_cost,
+	    status,
+	    audit_status,
+	    auditor,
+	    audit_time,
+	    draw_info,
+	    create_time,
+	    update_time,
+	    draw_money_way_id,
+	    request_time,
+	    response_time,
+	     client_type,
+	       channel)
+	 values
+	   (
+	    #{thirdDrawNo},
+	    #{memberId},
+	    #{amount},
+	    #{handingCost},
+	    #{status},
+	    #{auditStatus},
+	    #{auditor},
+	    #{auditTime},
+	    #{drawInfo},
+	    #{createTime},
+	    #{updateTime},
+	    #{drawMoneyWayId},
+	    #{requestTime},
+	    #{responseTime},
+	     #{clientType},
+	  	   #{channel})
+  </insert>
+  
+  <update id="updateDrawMoneyLogAuditInfo" parameterType="map" >
+    update member_draw_money_log
+    set 
+      audit_status = #{auditStatus},
+      auditor = #{auditor},
+      audit_time = now(),
+      audit_info = #{auditInfo},
+      update_time = now()
+      <if test="status != null">
+     	,status = #{status}
+     </if>
+      <if test="drawInfo != null">
+     	,draw_info = #{drawInfo}
+     </if>
+    where id = #{id}
+  </update>
+  <update id="updateDrawMoneyStatus" parameterType="map" >
+    update member_draw_money_log
+    set 
+      status = #{newStatus}
+      ,update_time = now()
+     <if test="requestTime != null">
+     	,request_time = #{requestTime}
+     </if>
+     <if test="responseTime != null">
+     	,response_time = #{responseTime}
+     </if>
+     <if test="drawInfo != null">
+     	,draw_info = #{drawInfo}
+     </if>
+     <if test="thirdDrawNo != null">
+     	,third_draw_no = #{thirdDrawNo}
+     </if>
+    
+    where id = #{id} and  status = #{oldStatus}
+  </update>
+  
+  <update id="updateDrawMoneyWithManual" parameterType="map" >
+    update member_draw_money_log
+    set 
+      status = #{status}
+      ,update_time = #{updateTime}
+      ,request_time = #{requestTime}
+      ,response_time = #{responseTime}
+      ,audit_status = #{auditStatus}
+      ,auditor = #{auditor}
+      ,audit_time = now()
+      ,audit_info = #{auditInfo}
+     <if test="drawInfo != null">
+     	,draw_info = #{drawInfo}
+     </if>
+    
+    where id = #{id}
+  </update>
+  
+  <resultMap id="memberDrawMoneyLogResultMap" type="com.aicai.jcob.memberdrawmoney.common.domain.result.MemberDrawMoneyLogResult">
+    <id column="id" property="id" />
+    <result column="member_id" property="memberId"  />
+    <result column="real_name" property="realName"  />
+    <result column="amount" property="amount"  />
+    <result column="handing_cost" property="handingCost" />
+    <result column="status" property="status" />
+    <result column="audit_status" property="auditStatus"  />
+    <result column="auditor" property="auditor"  />
+    <result column="audit_time" property="auditTime" />
+    <result column="audit_info" property="auditInfo"  />
+    <result column="draw_info" property="drawInfo"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"/>
+    <result column="request_time" property="requestTime"  />
+    <result column="response_time" property="responseTime"/>
+    
+    <result column="bank_name" property="bankName"  />
+    <result column="draw_bank_info" property="drawBankInfo"/>
+    
+    <result column="withdraw_count" property="withdrawCount"  />
+    <result column="amount_cum" property="amountSum"/>
+    <result column="handingcost_sum" property="handingCostSum"/>
+  </resultMap>
+
+	<select id="queryMemberDrawMoneyLogByPageCount" parameterType="map"
+		resultType="int">
+		select count(1) from member_draw_money_log mw
+		left join member_draw_money_way md on md.id=mw.draw_money_way_id
+		left join member m on mw.member_id=m.id
+		<include refid="memberDrawMoneyLogCondition" />
+	</select>
+
+	<select id="queryMemberDrawMoneyLogByPage" parameterType="map"
+		resultMap="memberDrawMoneyLogResultMap">
+		select
+		mw.id id,
+		mw.member_id member_id,
+		m.real_name real_name,
+		mw.amount amount,
+		mw.handing_cost handing_cost,
+		mw.status status,
+		mw.audit_status audit_status,
+		mw.auditor auditor,
+		mw.audit_time audit_time,
+		mw.audit_info audit_info,
+		mw.draw_info draw_info,
+		mw.create_time create_time,
+		mw.request_time request_time,
+		mw.response_time response_time,
+		md.bank_name bank_name,
+		md.draw_bank_info draw_bank_info
+		from member_draw_money_log mw 
+		left join member_draw_money_way md on md.id=mw.draw_money_way_id
+		left join member m on mw.member_id=m.id
+		<include refid="memberDrawMoneyLogCondition" />
+		order by id desc
+		limit #{startIndex},#{pageSize}
+	</select>
+
+	<sql id="memberDrawMoneyLogCondition">
+		<where>
+			<if test="condition != null">
+				<if test="condition.memberId != null">
+					and mw.member_id = #{condition.memberId}
+				</if>
+				<if test="condition.startDate != null">
+					and mw.create_time>=#{condition.startDate}
+				</if>
+				<if test="condition.endDate != null">
+				<![CDATA[and mw.create_time<=#{condition.endDate}]]>
+				</if>
+				<if test="condition.responseStartDate != null">
+					and mw.response_time>=#{condition.responseStartDate}
+				</if>
+				<if test="condition.responseEndDate != null">
+				<![CDATA[and mw.response_time<=#{condition.responseEndDate}]]>
+				</if>
+				<if test="condition.status != null and condition.status != -1">
+					and mw.status=#{condition.status}
+				</if>
+				<if test="condition.auditStatus != null and condition.auditStatus != -1">
+					and mw.audit_status=#{condition.auditStatus}
+				</if>
+				<if test="condition.minAmount != null">
+					and mw.amount>=#{condition.minAmount}
+				</if>
+				<if test="condition.maxAmount != null">
+					<![CDATA[and mw.amount<=#{condition.maxAmount}]]>
+				</if>
+				<if test="condition.phone != null and condition.phone != ''">
+					and m.phone=#{condition.phone}
+				</if>
+				<if test="condition.realName != null and condition.realName != ''">
+					and m.real_name like CONCAT('%',#{condition.realName},'%')
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="statistMemberDrawMoneyLog" resultMap="memberDrawMoneyLogResultMap" parameterType="map" >
+   		select COUNT(*) withdraw_count,SUM(mw.amount) amount_cum,SUM(mw.handing_cost) handingcost_sum from member_draw_money_log mw
+		left join member_draw_money_way md on md.id=mw.draw_money_way_id
+		left join member m on mw.member_id=m.id
+		<include refid="memberDrawMoneyLogCondition" />
+  	</select>
+	
+</mapper>

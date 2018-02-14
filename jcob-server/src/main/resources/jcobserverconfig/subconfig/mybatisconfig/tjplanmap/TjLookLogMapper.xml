@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TjLookLogMapper" >
+  <resultMap id="BaseResultMap" type="TjLookLog" >
+    <id column="id" property="id"  />
+    <result column="plan_id" property="planId"  />
+    <result column="amount" property="amount" />
+    <result column="member_id" property="memberId"  />
+    <result column="game_id" property="gameId"  />
+    <result column="race_type" property="raceType"  />
+    <result column="expert_level" property="expertLevel"  />
+    <result column="create_time" property="createTime"  />
+    <result column="update_time" property="updateTime"  />
+    <result column="client_type" property="clientType"  />
+    <result column="channel" property="channel"  />
+  </resultMap>
+  <resultMap id="pageAdminLookLogResult" type="com.aicai.jcob.tjplan.common.domain.result.PageAdminLookLogVo" >
+    <result column="looklogId" property="looklogId"  />
+    <result column="plan_id" property="planId"  />
+    <result column="amount" property="amount" />
+    <result column="member_id" property="lookerMemberId"  />
+    <result column="game_id" property="gameType"  />
+    <result column="race_type" property="raceType"  />
+    <result column="expert_level" property="expertLevel"  />
+    <result column="create_time" property="lookedTime"  />
+    <result column="client_type" property="clientType"  />
+    <result column="race_status" property="raceStatus"  />
+    <result column="planCreateTime" property="planCreateTime"  />
+    <result column="open_status" property="openStatus"  />
+    <result column="win_race_count" property="winRaceCount" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, plan_id, amount, member_id, game_id, race_type, expert_level, create_time, update_time,client_type,channel
+  </sql>
+  <select id="queryTjLookLogByMemberIdAndPlanId" resultMap="BaseResultMap" parameterType="map" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_look_log where member_id = #{memberId} and plan_id = #{planId}
+   
+  </select>
+  <select id="queryLookLogById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from tj_look_log where id = #{id}
+   
+  </select>
+  <select id="queryPlanIdByMemberId" resultType="java.lang.Long" parameterType="map" >
+    select
+    plan_id
+    from tj_look_log where member_id = #{memberId} 
+   
+  </select>
+ 
+  <insert id="saveTjLookLog" parameterType="TjLookLog" useGeneratedKeys="true" keyProperty="id">
+    insert into tj_look_log
+	   (
+	    plan_id,
+	    amount,
+	    member_id,
+	    game_id,
+	    race_type,
+	    expert_level,
+	    create_time,
+	    update_time,
+	    client_type,
+	    channel)
+	 values
+	   (
+	    #{planId},
+	    #{amount},
+	    #{memberId},
+	    #{gameId},
+	    #{raceType},
+	    #{expertLevel},
+	    #{createTime},
+	    #{updateTime},
+	    #{clientType},
+	    #{channel})
+  </insert>
+ 
+  <select id="adminPageLookLog" resultMap="pageAdminLookLogResult" parameterType="map" >
+    select log.id looklogId,log.plan_id,plan.amount,log.member_id lookerMemberId,plan.game_id gameType,plan.race_type,plan.expert_level,log.create_time
+    ,log.client_type,plan.race_status,plan.create_time planCreateTime,plan.open_status,plan.win_race_count,plan.member_id expertMemberId
+    from tj_look_log log,tj_plan plan
+    where log.plan_id = plan.id 
+    <![CDATA[
+    	AND log.create_time >= #{startDate}
+    	AND log.create_time <#{endDate}
+    	]]>
+    	<if test="planId != null">
+    	and log.plan_id = #{planId}
+    	</if>
+    	<if test="memberIdList != null">
+	   	and log.member_id in
+	   	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+	   		#{memberId}
+	   	</foreach>
+	   </if>
+	    <if test="expertLevelList != null">
+    	and plan.expert_level in
+    	<foreach collection="expertLevelList" item="expertLevel" open="(" separator="," close=")">
+    		#{expertLevel.index}
+    	</foreach>
+    	</if>
+    	
+    <if test="leftAndEqualAmount != null">
+    	<![CDATA[and plan.amount >= #{leftAndEqualAmount}]]>
+    </if>
+    <if test="rightAndEqualAmount != null">
+      <![CDATA[	and plan.amount <= #{rightAndEqualAmount}]]>
+    </if>
+    <if test="gameTypeList != null">
+    	and plan.game_id in
+    	<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    		#{gameType.index}
+    	</foreach>
+    </if>
+    <if test="raceTypeList != null">
+    	and plan.race_type in
+    	<foreach collection="raceTypeList" item="raceType" open="(" separator="," close=")">
+    		#{raceType.index}
+    	</foreach>
+    </if>
+    <if test="clientTypeList != null">
+    	and log.client_type in
+    	<foreach collection="clientTypeList" item="clientType" open="(" separator="," close=")">
+    		#{clientType.index}
+    	</foreach>
+    </if>
+    <if test="raceStatuList != null">
+    	and plan.race_status in
+    	<foreach collection="raceStatuList" item="raceStatus" open="(" separator="," close=")">
+    		#{raceStatus.index}
+    	</foreach>
+    </if>
+    <if test="winstatus != null and winstatus ==0">
+    	and plan.open_status = 0
+    </if>
+    <if test="winstatus != null and winstatus ==2">
+    	and plan.open_status = 1 and plan.win_race_count > 0
+    </if>
+    <if test="winstatus != null and winstatus ==1">
+    	and plan.open_status = 1 and plan.win_race_count = 0
+    </if>
+   	order by log.create_time desc
+   	limit #{startIndex},#{pageSize}
+  </select>
+  <select id="adminSumPageLookLogAmount" resultType="java.math.BigDecimal" parameterType="map" >
+    select sum(log.amount)
+    from tj_look_log log,tj_plan plan
+    where log.plan_id = plan.id 
+    <![CDATA[
+    	AND log.create_time >= #{startDate}
+    	AND log.create_time <#{endDate}
+    	]]>
+    	<if test="planId != null">
+    	and log.plan_id = #{planId}
+    	</if>
+    	<if test="memberIdList != null">
+	   	and log.member_id in
+	   	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+	   		#{memberId}
+	   	</foreach>
+	   </if>
+	    <if test="expertLevelList != null">
+    	and plan.expert_level in
+    	<foreach collection="expertLevelList" item="expertLevel" open="(" separator="," close=")">
+    		#{expertLevel.index}
+    	</foreach>
+    	</if>
+    	
+    <if test="leftAndEqualAmount != null">
+    	<![CDATA[and plan.amount >= #{leftAndEqualAmount}]]>
+    </if>
+    <if test="rightAndEqualAmount != null">
+      <![CDATA[	and plan.amount <= #{rightAndEqualAmount}]]>
+    </if>
+    <if test="gameTypeList != null">
+    	and plan.game_id in
+    	<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    		#{gameType.index}
+    	</foreach>
+    </if>
+    <if test="raceTypeList != null">
+    	and plan.race_type in
+    	<foreach collection="raceTypeList" item="raceType" open="(" separator="," close=")">
+    		#{raceType.index}
+    	</foreach>
+    </if>
+    <if test="clientTypeList != null">
+    	and log.client_type in
+    	<foreach collection="clientTypeList" item="clientType" open="(" separator="," close=")">
+    		#{clientType.index}
+    	</foreach>
+    </if>
+    <if test="raceStatuList != null">
+    	and plan.race_status in
+    	<foreach collection="raceStatuList" item="raceStatus" open="(" separator="," close=")">
+    		#{raceStatus.index}
+    	</foreach>
+    </if>
+    <if test="winstatus != null and winstatus ==0">
+    	and plan.open_status = 0
+    </if>
+    <if test="winstatus != null and winstatus ==2">
+    	and plan.open_status = 1 and plan.win_race_count > 0
+    </if>
+    <if test="winstatus != null and winstatus ==1">
+    	and plan.open_status = 1 and plan.win_race_count = 0
+    </if>
+  </select>
+  <select id="adminCountLookLog" resultType="java.lang.Integer" parameterType="map" >
+    select count(1) 
+    from tj_look_log log,tj_plan plan
+    where log.plan_id = plan.id 
+    <![CDATA[
+    	AND log.create_time >= #{startDate}
+    	AND log.create_time <#{endDate}
+    	]]>
+    	<if test="planId != null">
+    	and log.plan_id = #{planId}
+    	</if>
+    	<if test="memberIdList != null">
+	   	and log.member_id in
+	   	<foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+	   		#{memberId}
+	   	</foreach>
+	   </if>
+	    <if test="expertLevelList != null">
+    	and plan.expert_level in
+    	<foreach collection="expertLevelList" item="expertLevel" open="(" separator="," close=")">
+    		#{expertLevel.index}
+    	</foreach>
+    	</if>
+    	
+    <if test="leftAndEqualAmount != null">
+    	<![CDATA[and plan.amount >= #{leftAndEqualAmount}]]>
+    </if>
+    <if test="rightAndEqualAmount != null">
+      <![CDATA[	and plan.amount <= #{rightAndEqualAmount}]]>
+    </if>
+    <if test="gameTypeList != null">
+    	and plan.game_id in
+    	<foreach collection="gameTypeList" item="gameType" open="(" separator="," close=")">
+    		#{gameType.index}
+    	</foreach>
+    </if>
+    <if test="raceTypeList != null">
+    	and plan.race_type in
+    	<foreach collection="raceTypeList" item="raceType" open="(" separator="," close=")">
+    		#{raceType.index}
+    	</foreach>
+    </if>
+    <if test="clientTypeList != null">
+    	and log.client_type in
+    	<foreach collection="clientTypeList" item="clientType" open="(" separator="," close=")">
+    		#{clientType.index}
+    	</foreach>
+    </if>
+    <if test="raceStatuList != null">
+    	and plan.race_status in
+    	<foreach collection="raceStatuList" item="raceStatus" open="(" separator="," close=")">
+    		#{raceStatus.index}
+    	</foreach>
+    </if>
+    <if test="winstatus != null and winstatus ==0">
+    	and plan.open_status = 0
+    </if>
+    <if test="winstatus != null and winstatus ==2">
+    	and plan.open_status = 1 and plan.win_race_count > 0
+    </if>
+    <if test="winstatus != null and winstatus ==1">
+    	and plan.open_status = 1 and plan.win_race_count = 0
+    </if>
+  </select>
+  
+   <select id="pageLookLogByPlanId" resultMap="BaseResultMap" parameterType="map" >
+    select
+    log.*
+    from tj_look_log log ,tj_expert_info expert where log.member_id = expert.member_id and log.plan_id = #{planId}
+    order by expert.level desc,create_time desc
+   limit #{startIndex},#{pageSize}
+  </select>
+   <select id="countLookLogByPlanId" resultType="java.lang.Integer" parameterType="map" >
+    select
+    	count(1)
+    from tj_look_log log where  log.plan_id = #{planId}
+   
+  </select>
+</mapper>
